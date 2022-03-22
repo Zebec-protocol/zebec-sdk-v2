@@ -40,7 +40,6 @@ export const createInitMultiTokenStreamInstruction = async (
     })
 }
 
-
 export const createMultiTokenStreamPauseInstruction = async (
     sender: PublicKey,
     recipient: PublicKey,
@@ -66,7 +65,6 @@ export const createMultiTokenStreamPauseInstruction = async (
     })
 }
 
-
 export const createMultiTokenStreamResumeInstruction = async (
     sender: PublicKey,
     recipient: PublicKey,
@@ -90,8 +88,6 @@ export const createMultiTokenStreamResumeInstruction = async (
         data: Buffer.from(serialize(SCHEMA.ResumeSolStreamSchema, new SCHEMA.ResumeMultiTokenStream(ixData)))
     })
 }
-
-
 
 export const createMultiTokenStreamCancelInstruction = async (
     sender: PublicKey,
@@ -144,6 +140,8 @@ export const createMultiTokenStreamCancelInstruction = async (
 }
 
 
+
+
 export const createInitSolStreamInstruction = async (
     sender: PublicKey,
     receipient: PublicKey,
@@ -180,7 +178,6 @@ export const createInitSolStreamInstruction = async (
     });
 }
 
-
 export const createPauseSolStreamInstruction = async (
     sender: PublicKey, 
     recipient: PublicKey, 
@@ -210,7 +207,6 @@ export const createPauseSolStreamInstruction = async (
         )
     })
 }
-
 
 export const createResumeSolStreamInstruction = async (
     sender: PublicKey,
@@ -242,8 +238,6 @@ export const createResumeSolStreamInstruction = async (
     })
 }
 
-
-
 export const createCancelSolStreamInstruction = async (
     sender: PublicKey,
     recipient: PublicKey,
@@ -274,6 +268,34 @@ export const createCancelSolStreamInstruction = async (
             serialize(
                 SCHEMA.CancelSolStreamSchema, 
                 new SCHEMA.CancelSolStream(ixData)
+            )
+        )
+    })
+}
+
+export const  createDepositSolInstruction = async (
+    sender: PublicKey,
+    zebecWalletAddress: PublicKey,
+    programId: PublicKey
+): Promise<TransactionInstruction> => {
+
+    const keys = [
+        { pubkey: sender, isSigner: true, isWritable: true },
+        { pubkey: zebecWalletAddress, isSigner: false, isWritable: true },
+        { pubkey: SystemProgram.programId, isSigner: false, isWritable: false }
+    ]
+
+    const ixData = {
+        instruction: INSTRUCTION.DEPOSIT_SOL
+    }
+
+    return new TransactionInstruction({
+        keys,
+        programId,
+        data: Buffer.from(
+            serialize(
+                SCHEMA.DepositSolSchema,
+                new SCHEMA.DepositSol(ixData)
             )
         )
     })

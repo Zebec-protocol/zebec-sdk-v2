@@ -1,5 +1,5 @@
 
-class Stream {
+class Base {
     constructor(properties: {}) {
       Object.keys(properties).map((key) => {
         return (this[key] = properties[key]);
@@ -8,22 +8,17 @@ class Stream {
   }
 
 
+export class DepositSol extends Base {}
+export class InitSolStream extends Base {}
+export class PauseSolStream extends Base {}
+export class ResumeSolStream extends Base {}
+export class CancelSolStream extends Base {}
 
-export class InitSolStream extends Stream {}
 
-export class PauseSolStream extends Stream {}
-
-export class ResumeSolStream extends Stream {}
-
-export class CancelSolStream extends Stream {}
-
-export class InitMultiTokenStream extends Stream {}
-
-export class PauseMultiTokenStream extends Stream {}
-
-export class ResumeMultiTokenStream extends Stream {}
-
-export class CancelMultiTokenStream extends Stream {}
+export class InitMultiTokenStream extends Base {}
+export class PauseMultiTokenStream extends Base {}
+export class ResumeMultiTokenStream extends Base {}
+export class CancelMultiTokenStream extends Base {}
 
 
 
@@ -82,6 +77,19 @@ export const InitMultiTokenStreamSchema = new Map([
 ])
 
 
+
+export const DepositSolSchema = new Map([
+    [
+        DepositSol,
+        {
+            kind: "struct",
+            fields: [
+                ["instruction", "u8"],
+                ["amount", "u64"]
+            ]
+        }
+    ]
+])
 
 export const InitSolStreamSchema = new Map([
     [

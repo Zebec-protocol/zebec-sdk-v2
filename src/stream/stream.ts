@@ -58,19 +58,60 @@ export class StreamNative extends BaseStream {
         )
     }
 
-    public async init(data: any): Promise<any> {
+    async deposit(data: any): Promise<any> {
+        const { sender } = data;
+
+        const senderAddress = new PublicKey(sender);
+        const [zebecWalletAddress, _] = await this._findZebecWalletAccount(sender);
+
+        const ix = await INSTRUCTIONS.createDepositSolInstruction(
+            senderAddress,
+            zebecWalletAddress,
+            this._programId
+        )
+
+        let tx = new Transaction().add({...ix});
+        const recentHash = await this._connection.getLatestBlockhash();
+
+        try {
+            tx.recentBlockhash = recentHash.blockhash;
+            tx.feePayer = this.walletProvider.publicKey;
+            
+            console.log("transaction ix after adding properties: ", tx);
+    
+            const res = await this._signAndConfirm(tx);
+
+            console.log("response from sign and confirm: ", res);
+    
+            return {
+                status: "success",
+                message: "transaction success",
+                data: {
+                    ...res
+                }
+            }
+        } catch(e) {
+            return {
+                status: "error",
+                message: e,
+                data: null
+            }
+        }
+    }
+
+    async init(data: any): Promise<any> {
         const { sender, recipient, start_time, end_time, amount } = data;
         console.log("init solana stream data: ", data);
         
         const senderAddress = new PublicKey(sender);
-        const receipientAddress = new PublicKey(recipient)
+        const recipientAddress = new PublicKey(recipient)
         const [withdraw_escrow, _] = <[PublicKey, number]>await this._findWithDrawEscrowAccount(sender);
 
         const tx_escrow = new Keypair();
 
         const ix = await INSTRUCTIONS.createInitSolStreamInstruction(
             senderAddress,
-            receipientAddress,
+            recipientAddress,
             tx_escrow,
             withdraw_escrow,
             this._programId,
@@ -115,12 +156,12 @@ export class StreamNative extends BaseStream {
         const { sender, recipient, tx_escrow } = data;
 
         const senderAddress = new PublicKey(sender);
-        const receipientAddress = new PublicKey(recipient);
+        const recipientAddress = new PublicKey(recipient);
         const escrowAddress = new PublicKey(tx_escrow);
 
         const ix = await INSTRUCTIONS.createPauseSolStreamInstruction(
             senderAddress,
-            receipientAddress,
+            recipientAddress,
             escrowAddress,
             this._programId
         )
@@ -158,12 +199,12 @@ export class StreamNative extends BaseStream {
         const { sender, recipient, tx_escrow } = data;
         
         const senderAddress = new PublicKey(sender);
-        const receipientAddress = new PublicKey(recipient);
+        const recipientAddress = new PublicKey(recipient);
         const escrowAddress = new PublicKey(tx_escrow);
 
         const ix = await INSTRUCTIONS.createResumeSolStreamInstruction(
             senderAddress,
-            receipientAddress,
+            recipientAddress,
             escrowAddress,
             this._programId
         )
@@ -201,7 +242,7 @@ export class StreamNative extends BaseStream {
         const { sender, recipient, tx_escrow} = data;
 
         const senderAddress = new PublicKey(sender);
-        const receipientAddress = new PublicKey(recipient);
+        const recipientAddress = new PublicKey(recipient);
         const escrowAddress = new PublicKey(tx_escrow);
 
         const [zebecWallet, __] = await this._findZebecWalletAccount(sender);
@@ -209,7 +250,7 @@ export class StreamNative extends BaseStream {
 
         const ix = await INSTRUCTIONS.createCancelSolStreamInstruction(
             senderAddress,
-            receipientAddress,
+            recipientAddress,
             escrowAddress,
             zebecWallet,
             withdrawEscrow,
