@@ -30,7 +30,7 @@ export type WithdrawNativeStream = {
     amount: number;
 }
 
-export type DepositSol = {
+export type DepositWithdrawSol = {
     sender: string;
     amount: number;
 }

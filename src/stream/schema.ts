@@ -21,7 +21,7 @@ export class InitMultiTokenStream extends Base {}
 export class PauseMultiTokenStream extends Base {}
 export class ResumeMultiTokenStream extends Base {}
 export class CancelMultiTokenStream extends Base {}
-
+export class WithdrawMultiTokenStream extends Base {}
 
 
 export const CancelMultiTokenStreamSchema = new Map([
@@ -73,6 +73,19 @@ export const InitMultiTokenStreamSchema = new Map([
                 ["start_time", "u64"],
                 ["end_time", "u64"],
                 ["amount", "u64"],
+            ]
+        }
+    ]
+])
+
+export const WithdrawMultiTokenStreamSchema = new Map([
+    [
+        WithdrawMultiTokenStream,
+        {
+            kind: "struct",
+            fields: [
+                ["instruction", "u8"],
+                ["amount", "u64"]
             ]
         }
     ]

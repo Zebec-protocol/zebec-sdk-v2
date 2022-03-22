@@ -41,16 +41,18 @@
 }
 
 export const FEE_ADDRESS = "EsDV3m3xUZ7g8QKa1kFdbZT18nNz8ddGJRcTK84WDQ7k"
-export const TOKEN_PROGRAM_ID = "TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA"
+export const _TOKEN_PROGRAM_ID = "TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA"
 export const WITHDRAW_SOL_STRING = "withdraw_sol"
 export const ZEBEC_PROGRAM_ID = "AknC341xog56SrnoK6j3mUvaD1Y7tYayx1sxUGpeYWdX"
 export const A_TOKEN = "ATokenGPvbdGVxr1b2hvZbsiqW5xWH25efTNsLJA8knL"
 export const SYSTEM_RENT = "SysvarRent111111111111111111111111111111111";
 export const SPL_ASSOCIATED_TOKEN_ACCOUNT_PROGRAM_ID = "ATokenGPvbdGVxr1b2hvZbsiqW5xWH25efTNsLJA8knL"
 
+export const WITHDRAW_TOKEN_STRING = "withdraw_token";
+
 export enum RPC_ENDPOINTS {
     DEVNET = "https://api.devnet.solana.com",
     MAINNET = "https://api.mainnet-beta.solana.com",
     TESTNET = "https;//api.testnet.solana.com",
-    DEFAULT = MAINNET
+    DEFAULT = DEVNET
 }

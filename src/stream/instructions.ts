@@ -1,8 +1,8 @@
 import { Buffer } from 'buffer'
 import { serialize } from "borsh";
-import { Keypair, PublicKey, SystemProgram, TransactionInstruction } from "@solana/web3.js";
+import { Keypair, PublicKey, SystemProgram, Transaction, TransactionInstruction } from "@solana/web3.js";
 import * as SCHEMA from "./schema";
-import { A_TOKEN, FEE_ADDRESS, INSTRUCTION, SYSTEM_RENT, TOKEN_PROGRAM_ID } from "../constants";
+import { A_TOKEN, FEE_ADDRESS, INSTRUCTION, SYSTEM_RENT, _TOKEN_PROGRAM_ID } from "../constants";
 
 
 export const createInitMultiTokenStreamInstruction = async (
@@ -16,7 +16,7 @@ export const createInitMultiTokenStreamInstruction = async (
     end_time: number,
     amount: number
 ): Promise<TransactionInstruction> => {    
-    const _TOKEN_PROGRAM_ID_ = new PublicKey(TOKEN_PROGRAM_ID)
+    const _TOKEN_PROGRAM_ID_ = new PublicKey(_TOKEN_PROGRAM_ID)
     const keys = [
         { pubkey: sender, isSigner: true, isWritable: true },
         { pubkey: recipient, isSigner: false, isWritable: true },
@@ -40,7 +40,7 @@ export const createInitMultiTokenStreamInstruction = async (
     })
 }
 
-export const createMultiTokenStreamPauseInstruction = async (
+export const createPauseMultiTokenStreamInstruction = async (
     sender: PublicKey,
     recipient: PublicKey,
     tx_escrow: PublicKey,
@@ -65,7 +65,7 @@ export const createMultiTokenStreamPauseInstruction = async (
     })
 }
 
-export const createMultiTokenStreamResumeInstruction = async (
+export const createResumeMultiTokenStreamInstruction = async (
     sender: PublicKey,
     recipient: PublicKey,
     tx_escrow: PublicKey,
@@ -89,7 +89,7 @@ export const createMultiTokenStreamResumeInstruction = async (
     })
 }
 
-export const createMultiTokenStreamCancelInstruction = async (
+export const createCancelMultiTokenStreamInstruction = async (
     sender: PublicKey,
     recipient: PublicKey,
     token: PublicKey,
@@ -104,7 +104,7 @@ export const createMultiTokenStreamCancelInstruction = async (
     const FEE_ACCOUNT_ADDRESS = new PublicKey(FEE_ADDRESS)
     const A_TOKEN_Address = new PublicKey(A_TOKEN)
     const SYSTEM_RENT_ADDRESS = new PublicKey(SYSTEM_RENT)
-    const TOKEN_PROGRAM_ID_ADDRESS = new PublicKey(TOKEN_PROGRAM_ID)
+    const TOKEN_PROGRAM_ID_ADDRESS = new PublicKey(_TOKEN_PROGRAM_ID)
 
     const keys = [
         { pubkey: sender, isSigner: true, isWritable: true },
@@ -135,6 +135,55 @@ export const createMultiTokenStreamCancelInstruction = async (
                 SCHEMA.CancelMultiTokenStreamSchema, 
                 new SCHEMA.CancelMultiTokenStream(ixData)
             )
+        )
+    })
+}
+
+export const createWithdrawMultiTokenStreamInstruction = async(
+    senderAddress: PublicKey,
+    recipientAddress: PublicKey,
+    zebecWalletAddress: PublicKey,
+    escrowAddress: PublicKey,
+    withdrawEscrowAddress: PublicKey,
+    _TOKEN_PROGRAM_ID_: PublicKey,
+    tokenMintAddress: PublicKey,
+    _SYSTEM_RENT: PublicKey,
+    zebecWalletAssociatedTokenAddress: PublicKey,
+    recipientAssociatedTokenAddress: PublicKey,
+    _A_TOKEN: PublicKey,
+    _FEE_ADDRESS: PublicKey,
+    feeAssociatedTokenAddress: PublicKey,
+    programId: PublicKey,
+    amount: number
+): Promise<TransactionInstruction> => {
+
+    const keys = [
+        { pubkey: senderAddress, isSigner: false, isWritable: true },
+        { pubkey: recipientAddress, isSigner: true, isWritable: true },
+        { pubkey: zebecWalletAddress, isSigner: false, isWritable: true },
+        { pubkey: escrowAddress, isSigner: false, isWritable: true },
+        { pubkey: withdrawEscrowAddress, isSigner: false, isWritable: true },
+        { pubkey: _TOKEN_PROGRAM_ID_, isSigner: false, isWritable: false },
+        { pubkey: tokenMintAddress, isSigner: false, isWritable: true },
+        { pubkey: _SYSTEM_RENT, isSigner: false, isWritable: false },
+        { pubkey: zebecWalletAssociatedTokenAddress, isSigner: false, isWritable: true },
+        { pubkey: recipientAssociatedTokenAddress, isSigner: false, isWritable: true },
+        { pubkey: _A_TOKEN, isSigner: false, isWritable: false },
+        { pubkey: SystemProgram.programId, isSigner: false, isWritable: false },
+        { pubkey: _FEE_ADDRESS, isSigner: false, isWritable: true },
+        { pubkey: feeAssociatedTokenAddress, isSigner: false, isWritable: true },
+    ]
+
+    const ixData = {
+        instruction: INSTRUCTION.WITHDRAW_TOKEN_STREAM,
+        amount
+    }
+
+    return new TransactionInstruction({
+        keys,
+        programId,
+        data: Buffer.from(
+            serialize(SCHEMA.WithdrawMultiTokenStreamSchema, new SCHEMA.WithdrawMultiTokenStream({...ixData}))
         )
     })
 }
