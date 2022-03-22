@@ -59,7 +59,7 @@ export class StreamNative extends BaseStream {
     }
 
     async deposit(data: any): Promise<any> {
-        const { sender } = data;
+        const { sender, amount } = data;
 
         const senderAddress = new PublicKey(sender);
         const [zebecWalletAddress, _] = await this._findZebecWalletAccount(sender);
@@ -67,6 +67,7 @@ export class StreamNative extends BaseStream {
         const ix = await INSTRUCTIONS.createDepositSolInstruction(
             senderAddress,
             zebecWalletAddress,
+            amount,
             this._programId
         )
 
@@ -85,7 +86,7 @@ export class StreamNative extends BaseStream {
     
             return {
                 status: "success",
-                message: "transaction success",
+                message: "deposit successful",
                 data: {
                     ...res
                 }
@@ -97,6 +98,52 @@ export class StreamNative extends BaseStream {
                 data: null
             }
         }
+    }
+
+    async withdrawDepositedSol(data: any): Promise<any> {
+        const { sender, amount } = data;
+
+        const senderAddress = new PublicKey(sender);
+        const [zebecWalletAddress, __] = await this._findZebecWalletAccount(sender);
+        const [withdrawEscrow, _] = await this._findWithDrawEscrowAccount(sender);
+
+        const ix = await INSTRUCTIONS.createWithdrawDepositedSolInstruction(
+            senderAddress,
+            zebecWalletAddress,
+            withdrawEscrow,
+            amount,
+            this._programId
+        )
+
+        let tx = new Transaction().add({...ix});
+        const recentHash = await this._connection.getLatestBlockhash();
+
+        try {
+            tx.recentBlockhash = recentHash.blockhash;
+            tx.feePayer = this.walletProvider.publicKey;
+            
+            console.log("transaction ix after adding properties: ", tx);
+    
+            const res = await this._signAndConfirm(tx);
+
+            console.log("response from sign and confirm: ", res);
+    
+            return {
+                status: "success",
+                message: "withdraw successful",
+                data: {
+                    ...res
+                }
+            }
+        } catch(e) {
+            return {
+                status: "error",
+                message: e,
+                data: null
+            }
+        }
+
+
     }
 
     async init(data: any): Promise<any> {
@@ -137,7 +184,7 @@ export class StreamNative extends BaseStream {
     
             return {
                 status: "success",
-                message: "transaction success",
+                message: "stream started successfully",
                 data: {
                     pda: tx_escrow.publicKey.toBase58(), 
                     ...res
@@ -181,7 +228,7 @@ export class StreamNative extends BaseStream {
     
             return {
                 status: "success",
-                message: "transaction success",
+                message: "stream paused",
                 data: { 
                     ...res
                 }
@@ -224,7 +271,7 @@ export class StreamNative extends BaseStream {
     
             return {
                 status: "success",
-                message: "transaction success",
+                message: "stream resumed",
                 data: { 
                     ...res
                 }
@@ -273,7 +320,7 @@ export class StreamNative extends BaseStream {
     
             return {
                 status: "success",
-                message: "transaction success",
+                message: "stream canceled",
                 data: { 
                     ...res
                 }

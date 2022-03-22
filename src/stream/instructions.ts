@@ -276,6 +276,7 @@ export const createCancelSolStreamInstruction = async (
 export const  createDepositSolInstruction = async (
     sender: PublicKey,
     zebecWalletAddress: PublicKey,
+    amount: number,
     programId: PublicKey
 ): Promise<TransactionInstruction> => {
 
@@ -286,7 +287,8 @@ export const  createDepositSolInstruction = async (
     ]
 
     const ixData = {
-        instruction: INSTRUCTION.DEPOSIT_SOL
+        instruction: INSTRUCTION.DEPOSIT_SOL,
+        amount: amount
     }
 
     return new TransactionInstruction({
@@ -296,6 +298,38 @@ export const  createDepositSolInstruction = async (
             serialize(
                 SCHEMA.DepositSolSchema,
                 new SCHEMA.DepositSol(ixData)
+            )
+        )
+    })
+}
+
+export const createWithdrawDepositedSolInstruction = async (
+    senderAddress: PublicKey,
+    zebecWalletAddress: PublicKey,
+    withdrawEscrowAddress: PublicKey,
+    amount: number,
+    programId: PublicKey
+): Promise<TransactionInstruction> => {
+
+    const keys = [
+        { pubkey: senderAddress, isSigner: true, isWritable: true },
+        { pubkey: zebecWalletAddress, isSigner: false, isWritable: true },
+        { pubkey: withdrawEscrowAddress, isSigner: false, isWritable: true },
+        { pubkey: SystemProgram. programId, isSigner: false, isWritable: false }
+    ]
+
+    const ixData = {
+        instruction: INSTRUCTION.WITHDRAW_SOL,
+        amount: amount
+    }
+
+    return new TransactionInstruction({
+        keys,
+        programId,
+        data: Buffer.from(
+            serialize(
+                SCHEMA.WithdrawDepositedSolSchema,
+                new SCHEMA.WithdrawDepositedSol(ixData)
             )
         )
     })
