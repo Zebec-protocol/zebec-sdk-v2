@@ -11,8 +11,8 @@ const response = await stream.init(
     {
         sender: 'wallet_address',
         recipient: 'wallet_address',
-        start_time: number
-        end_time: number
+        start_time: number,
+        end_time: number,
         amount: number
     }
 )
