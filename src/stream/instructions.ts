@@ -334,3 +334,43 @@ export const createWithdrawDepositedSolInstruction = async (
         )
     })
 }
+
+export const createWithdrawSolStreamInstruction = async (
+    senderAddress: PublicKey,
+    receipientAddress: PublicKey,
+    txEscrowAddress: PublicKey,
+    zebecWalletAddress: PublicKey,
+    withdrawEscrowAddress: PublicKey,
+    amount: number,
+    programId: PublicKey
+): Promise<TransactionInstruction> => {
+
+    const feeAddress = new PublicKey(FEE_ADDRESS)
+
+    const keys = [
+        { pubkey: senderAddress, isSigner: false, isWritable: true },
+        { pubkey: receipientAddress, isSigner: true, isWritable: true },
+        { pubkey: zebecWalletAddress, isSigner: false, isWritable: true },
+        { pubkey: txEscrowAddress, isSigner: false, isWritable: true },
+        { pubkey: withdrawEscrowAddress, isSigner: false, isWritable: true },
+        { pubkey: SystemProgram.programId, isSigner: false, isWritable: false },
+        { pubkey: feeAddress, isSigner: false, isWritable: true }
+    ]
+
+    const ixData = {
+        instruction: INSTRUCTION.WITHDRAW_SOL_STREAM,
+        amount: amount
+    }
+
+
+    return new TransactionInstruction({
+        keys,
+        programId,
+        data: Buffer.from(
+            serialize(
+                SCHEMA.WithdrawStreamSolSchema,
+                new SCHEMA.WithdrawStreamSol(ixData)
+            )
+        )
+    })
+}

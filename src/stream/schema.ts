@@ -10,6 +10,7 @@ class Base {
 
 export class DepositSol extends Base {}
 export class WithdrawDepositedSol extends Base {}
+export class WithdrawStreamSol extends Base {}
 export class InitSolStream extends Base {}
 export class PauseSolStream extends Base {}
 export class ResumeSolStream extends Base {}
@@ -95,6 +96,19 @@ export const DepositSolSchema = new Map([
 export const WithdrawDepositedSolSchema = new Map([
     [
         WithdrawDepositedSol,
+        {
+            kind: "struct",
+            fields: [
+                ["instruction", "u8"],
+                ["amount", "u64"]
+            ]
+        }
+    ]
+])
+
+export const WithdrawStreamSolSchema = new Map([
+    [
+        WithdrawStreamSol,
         {
             kind: "struct",
             fields: [

@@ -333,4 +333,55 @@ export class StreamNative extends BaseStream {
             }
         }
     }
+
+    async withdraw(data: any): Promise<any> {
+        const { sender, amount, recipient, tx_escrow } = data;
+
+
+        const senderAddress = new PublicKey(sender);
+        const recipientAddress = new PublicKey(recipient);
+        const escrowAddress = new PublicKey(tx_escrow);
+
+        const [zebecWalletAddress, _] = await this._findZebecWalletAccount(sender);
+        const [withdrawEscrowAddress, __] = await this._findWithDrawEscrowAccount(sender);
+
+        const ix = await INSTRUCTIONS.createWithdrawSolStreamInstruction(
+            senderAddress,
+            recipientAddress,
+            escrowAddress,
+            zebecWalletAddress,
+            withdrawEscrowAddress,
+            amount,
+            this._programId
+        )
+
+        let tx = new Transaction().add({...ix});
+
+        const recentHash = await this._connection.getLatestBlockhash()
+        
+        try {
+            tx.recentBlockhash = recentHash.blockhash;
+            tx.feePayer = this.walletProvider.publicKey;
+            
+            console.log("transaction ix after adding properties: ", tx);
+    
+            const res = await this._signAndConfirm(tx);
+
+            console.log("response from sign and confirm: ", res);
+    
+            return {
+                status: "success",
+                message: "stream canceled",
+                data: { 
+                    ...res
+                }
+            }
+        } catch(e) {
+            return {
+                status: "error",
+                message: e,
+                data: null
+            }
+        }
+    }
 }
