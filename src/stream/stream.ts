@@ -1,8 +1,10 @@
 import { Commitment, Connection, ConnectionConfig, Keypair, PublicKey, Transaction } from "@solana/web3.js";
 import { ZEBEC_PROGRAM_ID, RPC_ENDPOINTS, WITHDRAW_SOL_STRING } from "../constants";
 import * as INSTRUCTIONS from './instructions'
+import { DepositWithdrawSol, InitNativeStream, PauseResumeCancelNativeStream, SignAndConfirm, StreamTransactionResponse, WithdrawNativeStream } from "./types";
 
-export class BaseStream {
+
+class BaseStream {
     protected _connection: Connection;
     protected _programId: PublicKey = new PublicKey(ZEBEC_PROGRAM_ID);
     protected _commitment: Commitment | ConnectionConfig | undefined;
@@ -18,8 +20,7 @@ export class BaseStream {
         this._commitment = commitment as Commitment;
     }
 
-    // TODO: add return type
-    protected async _signAndConfirm(tx: Transaction, commitment: Commitment | undefined = "confirmed"): Promise<any> {
+    protected async _signAndConfirm(tx: Transaction, commitment: Commitment | undefined = "confirmed"): Promise<SignAndConfirm> {
         const signed = await this.walletProvider.signTransaction(tx);
         const signature = await this._connection.sendRawTransaction(signed.serialize());
         await this._connection.confirmTransaction(signature, commitment);
@@ -38,28 +39,28 @@ export class BaseStream {
 
 }
 
-// TODO: Add Data type
-
-export class StreamNative extends BaseStream {
+export class NativeStream extends BaseStream {
     constructor(
         walletProvider: any,
         rpcUrl: string = RPC_ENDPOINTS.DEFAULT,
-        commitment: Commitment |  string = "confirmed"
+        commitment: Commitment |  undefined = "confirmed"
     ) {
-        super (walletProvider, rpcUrl, commitment);
+        super(walletProvider, rpcUrl, commitment);
         console.log("Native Stream Initialized!", walletProvider, rpcUrl);
     }
 
-    protected async _findWithDrawEscrowAccount(sender: PublicKey): Promise<[PublicKey, number]> {
+    protected async _findWithDrawEscrowAccount(walletAddress: PublicKey): Promise<[PublicKey, number]> {
         
         return await PublicKey.findProgramAddress(
-            [Buffer.from(WITHDRAW_SOL_STRING), sender.toBuffer()],
+            [Buffer.from(WITHDRAW_SOL_STRING), walletAddress.toBuffer()],
             this._programId
         )
     }
 
-    async deposit(data: any): Promise<any> {
+    async deposit(data: DepositWithdrawSol): Promise<StreamTransactionResponse> {
         const { sender, amount } = data;
+
+        console.log("deposit solana to Zebec Wallet started with: ", data);
 
         const senderAddress = new PublicKey(sender);
         const [zebecWalletAddress, _] = await this._findZebecWalletAccount(sender);
@@ -100,8 +101,9 @@ export class StreamNative extends BaseStream {
         }
     }
 
-    async withdrawDepositedSol(data: any): Promise<any> {
+    async withdrawDepositedSol(data: DepositWithdrawSol): Promise<StreamTransactionResponse> {
         const { sender, amount } = data;
+        console.log("withdraw solana from Zebec Wallet started with: ", data);
 
         const senderAddress = new PublicKey(sender);
         const [zebecWalletAddress, __] = await this._findZebecWalletAccount(sender);
@@ -146,13 +148,13 @@ export class StreamNative extends BaseStream {
 
     }
 
-    async init(data: any): Promise<any> {
-        const { sender, recipient, start_time, end_time, amount } = data;
+    async init(data: InitNativeStream): Promise<StreamTransactionResponse> {
+        const { sender, receiver, start_time, end_time, amount } = data;
         console.log("init solana stream data: ", data);
         
         const senderAddress = new PublicKey(sender);
-        const recipientAddress = new PublicKey(recipient)
-        const [withdraw_escrow, _] = <[PublicKey, number]>await this._findWithDrawEscrowAccount(sender);
+        const recipientAddress = new PublicKey(receiver)
+        const [withdraw_escrow, _] = <[PublicKey, number]>await this._findWithDrawEscrowAccount(senderAddress);
 
         const tx_escrow = new Keypair();
 
@@ -199,12 +201,14 @@ export class StreamNative extends BaseStream {
         }
     }
 
-    async pause(data: any): Promise<any> {
-        const { sender, recipient, tx_escrow } = data;
+    async pause(data: PauseResumeCancelNativeStream): Promise<StreamTransactionResponse> {
+        const { sender, receiver, pda } = data;
+        console.log("pause solana stream data: ", data);
+
 
         const senderAddress = new PublicKey(sender);
-        const recipientAddress = new PublicKey(recipient);
-        const escrowAddress = new PublicKey(tx_escrow);
+        const recipientAddress = new PublicKey(receiver);
+        const escrowAddress = new PublicKey(pda);
 
         const ix = await INSTRUCTIONS.createPauseSolStreamInstruction(
             senderAddress,
@@ -214,7 +218,7 @@ export class StreamNative extends BaseStream {
         )
 
         let tx = new Transaction().add({...ix});
-        let recentHash = await this._connection.getRecentBlockhash();
+        let recentHash = await this._connection.getLatestBlockhash();
 
         try {
             tx.recentBlockhash = recentHash.blockhash;
@@ -242,12 +246,13 @@ export class StreamNative extends BaseStream {
         }
     }
 
-    async resume(data: any): Promise<any> {
-        const { sender, recipient, tx_escrow } = data;
+    async resume(data: PauseResumeCancelNativeStream): Promise<StreamTransactionResponse> {
+        const { sender, receiver, pda } = data;
+        console.log("resume solana stream data: ", data);
         
         const senderAddress = new PublicKey(sender);
-        const recipientAddress = new PublicKey(recipient);
-        const escrowAddress = new PublicKey(tx_escrow);
+        const recipientAddress = new PublicKey(receiver);
+        const escrowAddress = new PublicKey(pda);
 
         const ix = await INSTRUCTIONS.createResumeSolStreamInstruction(
             senderAddress,
@@ -285,15 +290,16 @@ export class StreamNative extends BaseStream {
         }
     }
 
-    async cancel(data: any): Promise<any> {
-        const { sender, recipient, tx_escrow} = data;
+    async cancel(data: PauseResumeCancelNativeStream): Promise<StreamTransactionResponse> {
+        const { sender, receiver, pda} = data;
+        console.log("cancel solana stream data: ", data);
 
         const senderAddress = new PublicKey(sender);
-        const recipientAddress = new PublicKey(recipient);
-        const escrowAddress = new PublicKey(tx_escrow);
+        const recipientAddress = new PublicKey(receiver);
+        const escrowAddress = new PublicKey(pda);
 
-        const [zebecWallet, __] = await this._findZebecWalletAccount(sender);
-        const [withdrawEscrow, _] = await this._findWithDrawEscrowAccount(sender);
+        const [zebecWallet, __] = await this._findZebecWalletAccount(senderAddress);
+        const [withdrawEscrow, _] = await this._findWithDrawEscrowAccount(senderAddress);
 
         const ix = await INSTRUCTIONS.createCancelSolStreamInstruction(
             senderAddress,
@@ -334,16 +340,16 @@ export class StreamNative extends BaseStream {
         }
     }
 
-    async withdraw(data: any): Promise<any> {
-        const { sender, amount, recipient, tx_escrow } = data;
-
+    async withdraw(data: WithdrawNativeStream): Promise<StreamTransactionResponse> {
+        const { sender, amount, receiver, pda } = data;
+        console.log("withdraw solana stream data: ", data);
 
         const senderAddress = new PublicKey(sender);
-        const recipientAddress = new PublicKey(recipient);
-        const escrowAddress = new PublicKey(tx_escrow);
+        const recipientAddress = new PublicKey(receiver);
+        const escrowAddress = new PublicKey(pda);
 
-        const [zebecWalletAddress, _] = await this._findZebecWalletAccount(sender);
-        const [withdrawEscrowAddress, __] = await this._findWithDrawEscrowAccount(sender);
+        const [zebecWalletAddress, _] = await this._findZebecWalletAccount(senderAddress);
+        const [withdrawEscrowAddress, __] = await this._findWithDrawEscrowAccount(senderAddress);
 
         const ix = await INSTRUCTIONS.createWithdrawSolStreamInstruction(
             senderAddress,
