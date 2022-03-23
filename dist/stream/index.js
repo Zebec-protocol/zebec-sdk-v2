@@ -17,3 +17,4 @@ Object.defineProperty(exports, "__esModule", { value: true });
 __exportStar(require("./instructions"), exports);
 __exportStar(require("./stream"), exports);
 __exportStar(require("./schema"), exports);
+__exportStar(require("./types"), exports);

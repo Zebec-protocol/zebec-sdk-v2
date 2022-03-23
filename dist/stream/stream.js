@@ -85,19 +85,19 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
     }
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.StreamNative = exports.BaseStream = void 0;
+exports.TokenStream = exports.NativeStream = void 0;
+var spl_token_1 = require("@solana/spl-token");
 var web3_js_1 = require("@solana/web3.js");
 var constants_1 = require("../constants");
 var INSTRUCTIONS = __importStar(require("./instructions"));
-var BaseStream = /** @class */ (function () {
-    function BaseStream(walletProvider, rpcUrl, commitment) {
+var ZebecStream = /** @class */ (function () {
+    function ZebecStream(walletProvider, rpcUrl, commitment) {
         this._programId = new web3_js_1.PublicKey(constants_1.ZEBEC_PROGRAM_ID);
         this.walletProvider = walletProvider;
         this._connection = new web3_js_1.Connection(rpcUrl, this._commitment);
         this._commitment = commitment;
     }
-    // TODO: add return type
-    BaseStream.prototype._signAndConfirm = function (tx, commitment) {
+    ZebecStream.prototype._signAndConfirm = function (tx, commitment) {
         if (commitment === void 0) { commitment = "confirmed"; }
         return __awaiter(this, void 0, void 0, function () {
             var signed, signature;
@@ -119,7 +119,7 @@ var BaseStream = /** @class */ (function () {
             });
         });
     };
-    BaseStream.prototype._findZebecWalletAccount = function (walletAddress) {
+    ZebecStream.prototype._findZebecWalletAccount = function (walletAddress) {
         return __awaiter(this, void 0, void 0, function () {
             return __generator(this, function (_a) {
                 switch (_a.label) {
@@ -129,44 +129,137 @@ var BaseStream = /** @class */ (function () {
             });
         });
     };
-    return BaseStream;
+    return ZebecStream;
 }());
-exports.BaseStream = BaseStream;
-// TODO: Add Data type
-var StreamNative = /** @class */ (function (_super) {
-    __extends(StreamNative, _super);
-    function StreamNative(walletProvider, rpcUrl, commitment) {
+var NativeStream = /** @class */ (function (_super) {
+    __extends(NativeStream, _super);
+    function NativeStream(walletProvider, rpcUrl, commitment) {
         if (rpcUrl === void 0) { rpcUrl = constants_1.RPC_ENDPOINTS.DEFAULT; }
         if (commitment === void 0) { commitment = "confirmed"; }
         var _this = _super.call(this, walletProvider, rpcUrl, commitment) || this;
         console.log("Native Stream Initialized!", walletProvider, rpcUrl);
         return _this;
     }
-    StreamNative.prototype._findWithDrawEscrowAccount = function (sender) {
+    NativeStream.prototype._findWithDrawEscrowAccount = function (walletAddress) {
         return __awaiter(this, void 0, void 0, function () {
             return __generator(this, function (_a) {
                 switch (_a.label) {
-                    case 0: return [4 /*yield*/, web3_js_1.PublicKey.findProgramAddress([Buffer.from(constants_1.WITHDRAW_SOL_STRING), sender.toBuffer()], this._programId)];
+                    case 0: return [4 /*yield*/, web3_js_1.PublicKey.findProgramAddress([Buffer.from(constants_1.WITHDRAW_SOL_STRING), walletAddress.toBuffer()], this._programId)];
                     case 1: return [2 /*return*/, _a.sent()];
                 }
             });
         });
     };
-    StreamNative.prototype.init = function (data) {
+    NativeStream.prototype.deposit = function (data) {
         return __awaiter(this, void 0, void 0, function () {
-            var sender, recipient, start_time, end_time, amount, senderAddress, receipientAddress, _a, withdraw_escrow, _, tx_escrow, ix, tx, recentHash, res, e_1;
+            var sender, amount, senderAddress, _a, zebecWalletAddress, _, ix, tx, recentHash, res, e_1;
             return __generator(this, function (_b) {
                 switch (_b.label) {
                     case 0:
-                        sender = data.sender, recipient = data.recipient, start_time = data.start_time, end_time = data.end_time, amount = data.amount;
+                        sender = data.sender, amount = data.amount;
+                        console.log("deposit solana to Zebec Wallet started with: ", data);
+                        senderAddress = new web3_js_1.PublicKey(sender);
+                        return [4 /*yield*/, this._findZebecWalletAccount(senderAddress)];
+                    case 1:
+                        _a = _b.sent(), zebecWalletAddress = _a[0], _ = _a[1];
+                        return [4 /*yield*/, INSTRUCTIONS.createDepositSolInstruction(senderAddress, zebecWalletAddress, amount, this._programId)];
+                    case 2:
+                        ix = _b.sent();
+                        tx = new web3_js_1.Transaction().add(__assign({}, ix));
+                        return [4 /*yield*/, this._connection.getLatestBlockhash()];
+                    case 3:
+                        recentHash = _b.sent();
+                        _b.label = 4;
+                    case 4:
+                        _b.trys.push([4, 6, , 7]);
+                        tx.recentBlockhash = recentHash.blockhash;
+                        tx.feePayer = this.walletProvider.publicKey;
+                        console.log("transaction ix after adding properties: ", tx);
+                        return [4 /*yield*/, this._signAndConfirm(tx)];
+                    case 5:
+                        res = _b.sent();
+                        console.log("response from sign and confirm: ", res);
+                        return [2 /*return*/, {
+                                status: "success",
+                                message: "deposit successful",
+                                data: __assign({}, res)
+                            }];
+                    case 6:
+                        e_1 = _b.sent();
+                        return [2 /*return*/, {
+                                status: "error",
+                                message: e_1,
+                                data: null
+                            }];
+                    case 7: return [2 /*return*/];
+                }
+            });
+        });
+    };
+    NativeStream.prototype.withdrawDepositedSol = function (data) {
+        return __awaiter(this, void 0, void 0, function () {
+            var sender, amount, senderAddress, _a, zebecWalletAddress, __, _b, withdrawEscrow, _, ix, tx, recentHash, res, e_2;
+            return __generator(this, function (_c) {
+                switch (_c.label) {
+                    case 0:
+                        sender = data.sender, amount = data.amount;
+                        console.log("withdraw solana from Zebec Wallet started with: ", data);
+                        senderAddress = new web3_js_1.PublicKey(sender);
+                        return [4 /*yield*/, this._findZebecWalletAccount(senderAddress)];
+                    case 1:
+                        _a = _c.sent(), zebecWalletAddress = _a[0], __ = _a[1];
+                        return [4 /*yield*/, this._findWithDrawEscrowAccount(senderAddress)];
+                    case 2:
+                        _b = _c.sent(), withdrawEscrow = _b[0], _ = _b[1];
+                        return [4 /*yield*/, INSTRUCTIONS.createWithdrawDepositedSolInstruction(senderAddress, zebecWalletAddress, withdrawEscrow, amount, this._programId)];
+                    case 3:
+                        ix = _c.sent();
+                        tx = new web3_js_1.Transaction().add(__assign({}, ix));
+                        return [4 /*yield*/, this._connection.getLatestBlockhash()];
+                    case 4:
+                        recentHash = _c.sent();
+                        _c.label = 5;
+                    case 5:
+                        _c.trys.push([5, 7, , 8]);
+                        tx.recentBlockhash = recentHash.blockhash;
+                        tx.feePayer = this.walletProvider.publicKey;
+                        console.log("transaction ix after adding properties: ", tx);
+                        return [4 /*yield*/, this._signAndConfirm(tx)];
+                    case 6:
+                        res = _c.sent();
+                        console.log("response from sign and confirm: ", res);
+                        return [2 /*return*/, {
+                                status: "success",
+                                message: "withdraw successful",
+                                data: __assign({}, res)
+                            }];
+                    case 7:
+                        e_2 = _c.sent();
+                        return [2 /*return*/, {
+                                status: "error",
+                                message: e_2,
+                                data: null
+                            }];
+                    case 8: return [2 /*return*/];
+                }
+            });
+        });
+    };
+    NativeStream.prototype.init = function (data) {
+        return __awaiter(this, void 0, void 0, function () {
+            var sender, receiver, start_time, end_time, amount, senderAddress, recipientAddress, _a, withdraw_escrow, _, tx_escrow, ix, tx, recentHash, res, e_3;
+            return __generator(this, function (_b) {
+                switch (_b.label) {
+                    case 0:
+                        sender = data.sender, receiver = data.receiver, start_time = data.start_time, end_time = data.end_time, amount = data.amount;
                         console.log("init solana stream data: ", data);
                         senderAddress = new web3_js_1.PublicKey(sender);
-                        receipientAddress = new web3_js_1.PublicKey(recipient);
-                        return [4 /*yield*/, this._findWithDrawEscrowAccount(sender)];
+                        recipientAddress = new web3_js_1.PublicKey(receiver);
+                        return [4 /*yield*/, this._findWithDrawEscrowAccount(senderAddress)];
                     case 1:
                         _a = _b.sent(), withdraw_escrow = _a[0], _ = _a[1];
                         tx_escrow = new web3_js_1.Keypair();
-                        return [4 /*yield*/, INSTRUCTIONS.createInitSolStreamInstruction(senderAddress, receipientAddress, tx_escrow, withdraw_escrow, this._programId, start_time, end_time, amount)];
+                        return [4 /*yield*/, INSTRUCTIONS.createInitSolStreamInstruction(senderAddress, recipientAddress, tx_escrow, withdraw_escrow, this._programId, start_time, end_time, amount)];
                     case 2:
                         ix = _b.sent();
                         tx = new web3_js_1.Transaction().add(__assign({}, ix));
@@ -186,14 +279,14 @@ var StreamNative = /** @class */ (function (_super) {
                         console.log("response from sign and confirm: ", res);
                         return [2 /*return*/, {
                                 status: "success",
-                                message: "transaction success",
+                                message: "stream started successfully",
                                 data: __assign({ pda: tx_escrow.publicKey.toBase58() }, res)
                             }];
                     case 6:
-                        e_1 = _b.sent();
+                        e_3 = _b.sent();
                         return [2 /*return*/, {
                                 status: "error",
-                                message: e_1,
+                                message: e_3,
                                 data: null
                             }];
                     case 7: return [2 /*return*/];
@@ -201,61 +294,18 @@ var StreamNative = /** @class */ (function (_super) {
             });
         });
     };
-    StreamNative.prototype.pause = function (data) {
+    NativeStream.prototype.pause = function (data) {
         return __awaiter(this, void 0, void 0, function () {
-            var sender, recipient, tx_escrow, senderAddress, receipientAddress, escrowAddress, ix, tx, recentHash, res, e_2;
+            var sender, receiver, pda, senderAddress, recipientAddress, escrowAddress, ix, tx, recentHash, res, e_4;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
-                        sender = data.sender, recipient = data.recipient, tx_escrow = data.tx_escrow;
+                        sender = data.sender, receiver = data.receiver, pda = data.pda;
+                        console.log("pause solana stream data: ", data);
                         senderAddress = new web3_js_1.PublicKey(sender);
-                        receipientAddress = new web3_js_1.PublicKey(recipient);
-                        escrowAddress = new web3_js_1.PublicKey(tx_escrow);
-                        return [4 /*yield*/, INSTRUCTIONS.createPauseSolStreamInstruction(senderAddress, receipientAddress, escrowAddress, this._programId)];
-                    case 1:
-                        ix = _a.sent();
-                        tx = new web3_js_1.Transaction().add(__assign({}, ix));
-                        return [4 /*yield*/, this._connection.getRecentBlockhash()];
-                    case 2:
-                        recentHash = _a.sent();
-                        _a.label = 3;
-                    case 3:
-                        _a.trys.push([3, 5, , 6]);
-                        tx.recentBlockhash = recentHash.blockhash;
-                        tx.feePayer = this.walletProvider.publicKey;
-                        console.log("transaction ix after adding properties: ", tx);
-                        return [4 /*yield*/, this._signAndConfirm(tx)];
-                    case 4:
-                        res = _a.sent();
-                        console.log("response from sign and confirm: ", res);
-                        return [2 /*return*/, {
-                                status: "success",
-                                message: "transaction success",
-                                data: __assign({}, res)
-                            }];
-                    case 5:
-                        e_2 = _a.sent();
-                        return [2 /*return*/, {
-                                status: "error",
-                                message: e_2,
-                                data: null
-                            }];
-                    case 6: return [2 /*return*/];
-                }
-            });
-        });
-    };
-    StreamNative.prototype.resume = function (data) {
-        return __awaiter(this, void 0, void 0, function () {
-            var sender, recipient, tx_escrow, senderAddress, receipientAddress, escrowAddress, ix, tx, recentHash, res, e_3;
-            return __generator(this, function (_a) {
-                switch (_a.label) {
-                    case 0:
-                        sender = data.sender, recipient = data.recipient, tx_escrow = data.tx_escrow;
-                        senderAddress = new web3_js_1.PublicKey(sender);
-                        receipientAddress = new web3_js_1.PublicKey(recipient);
-                        escrowAddress = new web3_js_1.PublicKey(tx_escrow);
-                        return [4 /*yield*/, INSTRUCTIONS.createResumeSolStreamInstruction(senderAddress, receipientAddress, escrowAddress, this._programId)];
+                        recipientAddress = new web3_js_1.PublicKey(receiver);
+                        escrowAddress = new web3_js_1.PublicKey(pda);
+                        return [4 /*yield*/, INSTRUCTIONS.createPauseSolStreamInstruction(senderAddress, recipientAddress, escrowAddress, this._programId)];
                     case 1:
                         ix = _a.sent();
                         tx = new web3_js_1.Transaction().add(__assign({}, ix));
@@ -274,14 +324,14 @@ var StreamNative = /** @class */ (function (_super) {
                         console.log("response from sign and confirm: ", res);
                         return [2 /*return*/, {
                                 status: "success",
-                                message: "transaction success",
+                                message: "stream paused",
                                 data: __assign({}, res)
                             }];
                     case 5:
-                        e_3 = _a.sent();
+                        e_4 = _a.sent();
                         return [2 /*return*/, {
                                 status: "error",
-                                message: e_3,
+                                message: e_4,
                                 data: null
                             }];
                     case 6: return [2 /*return*/];
@@ -289,23 +339,69 @@ var StreamNative = /** @class */ (function (_super) {
             });
         });
     };
-    StreamNative.prototype.cancel = function (data) {
+    NativeStream.prototype.resume = function (data) {
         return __awaiter(this, void 0, void 0, function () {
-            var sender, recipient, tx_escrow, senderAddress, receipientAddress, escrowAddress, _a, zebecWallet, __, _b, withdrawEscrow, _, ix, tx, recentHash, res, e_4;
+            var sender, receiver, pda, senderAddress, recipientAddress, escrowAddress, ix, tx, recentHash, res, e_5;
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0:
+                        sender = data.sender, receiver = data.receiver, pda = data.pda;
+                        console.log("resume solana stream data: ", data);
+                        senderAddress = new web3_js_1.PublicKey(sender);
+                        recipientAddress = new web3_js_1.PublicKey(receiver);
+                        escrowAddress = new web3_js_1.PublicKey(pda);
+                        return [4 /*yield*/, INSTRUCTIONS.createResumeSolStreamInstruction(senderAddress, recipientAddress, escrowAddress, this._programId)];
+                    case 1:
+                        ix = _a.sent();
+                        tx = new web3_js_1.Transaction().add(__assign({}, ix));
+                        return [4 /*yield*/, this._connection.getLatestBlockhash()];
+                    case 2:
+                        recentHash = _a.sent();
+                        _a.label = 3;
+                    case 3:
+                        _a.trys.push([3, 5, , 6]);
+                        tx.recentBlockhash = recentHash.blockhash;
+                        tx.feePayer = this.walletProvider.publicKey;
+                        console.log("transaction ix after adding properties: ", tx);
+                        return [4 /*yield*/, this._signAndConfirm(tx)];
+                    case 4:
+                        res = _a.sent();
+                        console.log("response from sign and confirm: ", res);
+                        return [2 /*return*/, {
+                                status: "success",
+                                message: "stream resumed",
+                                data: __assign({}, res)
+                            }];
+                    case 5:
+                        e_5 = _a.sent();
+                        return [2 /*return*/, {
+                                status: "error",
+                                message: e_5,
+                                data: null
+                            }];
+                    case 6: return [2 /*return*/];
+                }
+            });
+        });
+    };
+    NativeStream.prototype.cancel = function (data) {
+        return __awaiter(this, void 0, void 0, function () {
+            var sender, receiver, pda, senderAddress, recipientAddress, escrowAddress, _a, zebecWallet, __, _b, withdrawEscrow, _, ix, tx, recentHash, res, e_6;
             return __generator(this, function (_c) {
                 switch (_c.label) {
                     case 0:
-                        sender = data.sender, recipient = data.recipient, tx_escrow = data.tx_escrow;
+                        sender = data.sender, receiver = data.receiver, pda = data.pda;
+                        console.log("cancel solana stream data: ", data);
                         senderAddress = new web3_js_1.PublicKey(sender);
-                        receipientAddress = new web3_js_1.PublicKey(recipient);
-                        escrowAddress = new web3_js_1.PublicKey(tx_escrow);
-                        return [4 /*yield*/, this._findZebecWalletAccount(sender)];
+                        recipientAddress = new web3_js_1.PublicKey(receiver);
+                        escrowAddress = new web3_js_1.PublicKey(pda);
+                        return [4 /*yield*/, this._findZebecWalletAccount(senderAddress)];
                     case 1:
                         _a = _c.sent(), zebecWallet = _a[0], __ = _a[1];
-                        return [4 /*yield*/, this._findWithDrawEscrowAccount(sender)];
+                        return [4 /*yield*/, this._findWithDrawEscrowAccount(senderAddress)];
                     case 2:
                         _b = _c.sent(), withdrawEscrow = _b[0], _ = _b[1];
-                        return [4 /*yield*/, INSTRUCTIONS.createCancelSolStreamInstruction(senderAddress, receipientAddress, escrowAddress, zebecWallet, withdrawEscrow, this._programId)];
+                        return [4 /*yield*/, INSTRUCTIONS.createCancelSolStreamInstruction(senderAddress, recipientAddress, escrowAddress, zebecWallet, withdrawEscrow, this._programId)];
                     case 3:
                         ix = _c.sent();
                         tx = new web3_js_1.Transaction().add(__assign({}, ix));
@@ -324,14 +420,14 @@ var StreamNative = /** @class */ (function (_super) {
                         console.log("response from sign and confirm: ", res);
                         return [2 /*return*/, {
                                 status: "success",
-                                message: "transaction success",
+                                message: "stream canceled",
                                 data: __assign({}, res)
                             }];
                     case 7:
-                        e_4 = _c.sent();
+                        e_6 = _c.sent();
                         return [2 /*return*/, {
                                 status: "error",
-                                message: e_4,
+                                message: e_6,
                                 data: null
                             }];
                     case 8: return [2 /*return*/];
@@ -339,6 +435,350 @@ var StreamNative = /** @class */ (function (_super) {
             });
         });
     };
-    return StreamNative;
-}(BaseStream));
-exports.StreamNative = StreamNative;
+    NativeStream.prototype.withdraw = function (data) {
+        return __awaiter(this, void 0, void 0, function () {
+            var sender, amount, receiver, pda, senderAddress, recipientAddress, escrowAddress, _a, zebecWalletAddress, _, _b, withdrawEscrowAddress, __, ix, tx, recentHash, res, e_7;
+            return __generator(this, function (_c) {
+                switch (_c.label) {
+                    case 0:
+                        sender = data.sender, amount = data.amount, receiver = data.receiver, pda = data.pda;
+                        console.log("withdraw solana stream data: ", data);
+                        senderAddress = new web3_js_1.PublicKey(sender);
+                        recipientAddress = new web3_js_1.PublicKey(receiver);
+                        escrowAddress = new web3_js_1.PublicKey(pda);
+                        return [4 /*yield*/, this._findZebecWalletAccount(senderAddress)];
+                    case 1:
+                        _a = _c.sent(), zebecWalletAddress = _a[0], _ = _a[1];
+                        return [4 /*yield*/, this._findWithDrawEscrowAccount(senderAddress)];
+                    case 2:
+                        _b = _c.sent(), withdrawEscrowAddress = _b[0], __ = _b[1];
+                        return [4 /*yield*/, INSTRUCTIONS.createWithdrawSolStreamInstruction(senderAddress, recipientAddress, escrowAddress, zebecWalletAddress, withdrawEscrowAddress, amount, this._programId)];
+                    case 3:
+                        ix = _c.sent();
+                        tx = new web3_js_1.Transaction().add(__assign({}, ix));
+                        return [4 /*yield*/, this._connection.getLatestBlockhash()];
+                    case 4:
+                        recentHash = _c.sent();
+                        _c.label = 5;
+                    case 5:
+                        _c.trys.push([5, 7, , 8]);
+                        tx.recentBlockhash = recentHash.blockhash;
+                        tx.feePayer = this.walletProvider.publicKey;
+                        console.log("transaction ix after adding properties: ", tx);
+                        return [4 /*yield*/, this._signAndConfirm(tx)];
+                    case 6:
+                        res = _c.sent();
+                        console.log("response from sign and confirm: ", res);
+                        return [2 /*return*/, {
+                                status: "success",
+                                message: "stream canceled",
+                                data: __assign({}, res)
+                            }];
+                    case 7:
+                        e_7 = _c.sent();
+                        return [2 /*return*/, {
+                                status: "error",
+                                message: e_7,
+                                data: null
+                            }];
+                    case 8: return [2 /*return*/];
+                }
+            });
+        });
+    };
+    return NativeStream;
+}(ZebecStream));
+exports.NativeStream = NativeStream;
+var TokenStream = /** @class */ (function (_super) {
+    __extends(TokenStream, _super);
+    function TokenStream(walletProvider, rpcUrl, commitment) {
+        if (rpcUrl === void 0) { rpcUrl = constants_1.RPC_ENDPOINTS.DEFAULT; }
+        if (commitment === void 0) { commitment = "confirmed"; }
+        var _this = _super.call(this, walletProvider, rpcUrl, commitment) || this;
+        console.log("Token Stream Initialized!", walletProvider, rpcUrl);
+        return _this;
+    }
+    TokenStream.prototype._findWithDrawEscrowAccount = function (walletAddress, tokenMintAddress) {
+        return __awaiter(this, void 0, void 0, function () {
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0: return [4 /*yield*/, web3_js_1.PublicKey.findProgramAddress([Buffer.from(constants_1.WITHDRAW_TOKEN_STRING), walletAddress.toBuffer(), tokenMintAddress.toBuffer()], this._programId)];
+                    case 1: return [2 /*return*/, _a.sent()];
+                }
+            });
+        });
+    };
+    TokenStream.prototype._findAssociatedTokenAddress = function (walletAddress, tokenMintAddress) {
+        return __awaiter(this, void 0, void 0, function () {
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0: return [4 /*yield*/, web3_js_1.PublicKey.findProgramAddress([walletAddress.toBuffer(), spl_token_1.TOKEN_PROGRAM_ID.toBuffer(), tokenMintAddress.toBuffer()], new web3_js_1.PublicKey(constants_1.SPL_ASSOCIATED_TOKEN_ACCOUNT_PROGRAM_ID))[0]];
+                    case 1: return [2 /*return*/, (_a.sent())];
+                }
+            });
+        });
+    };
+    TokenStream.prototype.init = function (data) {
+        return __awaiter(this, void 0, void 0, function () {
+            var sender, receiver, token, start_time, end_time, amount, senderAddress, recipientAddress, tokenMintAddress, _a, withdrawEscrowAddress, _, escrowAddress, ix, tx, recentHash, res, e_8;
+            return __generator(this, function (_b) {
+                switch (_b.label) {
+                    case 0:
+                        sender = data.sender, receiver = data.receiver, token = data.token, start_time = data.start_time, end_time = data.end_time, amount = data.amount;
+                        senderAddress = new web3_js_1.PublicKey(sender);
+                        recipientAddress = new web3_js_1.PublicKey(receiver);
+                        tokenMintAddress = new web3_js_1.PublicKey(token);
+                        return [4 /*yield*/, this._findWithDrawEscrowAccount(senderAddress, tokenMintAddress)];
+                    case 1:
+                        _a = _b.sent(), withdrawEscrowAddress = _a[0], _ = _a[1];
+                        escrowAddress = new web3_js_1.Keypair();
+                        return [4 /*yield*/, INSTRUCTIONS.createInitMultiTokenStreamInstruction(senderAddress, recipientAddress, escrowAddress.publicKey, withdrawEscrowAddress, this._programId, tokenMintAddress, start_time, end_time, amount)];
+                    case 2:
+                        ix = _b.sent();
+                        tx = new web3_js_1.Transaction().add(__assign({}, ix));
+                        return [4 /*yield*/, this._connection.getLatestBlockhash()];
+                    case 3:
+                        recentHash = _b.sent();
+                        _b.label = 4;
+                    case 4:
+                        _b.trys.push([4, 6, , 7]);
+                        tx.recentBlockhash = recentHash.blockhash;
+                        tx.feePayer = this.walletProvider.publicKey;
+                        tx.partialSign(escrowAddress);
+                        console.log("transaction ix after adding properties: ", tx);
+                        return [4 /*yield*/, this._signAndConfirm(tx)];
+                    case 5:
+                        res = _b.sent();
+                        console.log("response from sign and confirm: ", res);
+                        return [2 /*return*/, {
+                                status: "success",
+                                message: "initiated token stream",
+                                data: __assign({}, res)
+                            }];
+                    case 6:
+                        e_8 = _b.sent();
+                        return [2 /*return*/, {
+                                status: "error",
+                                message: e_8,
+                                data: null
+                            }];
+                    case 7: return [2 /*return*/];
+                }
+            });
+        });
+    };
+    TokenStream.prototype.pause = function (data) {
+        return __awaiter(this, void 0, void 0, function () {
+            var sender, receiver, pda, senderAddress, recipientAddress, escrowAddress, ix, tx, recentHash, res, e_9;
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0:
+                        sender = data.sender, receiver = data.receiver, pda = data.pda;
+                        senderAddress = new web3_js_1.PublicKey(sender);
+                        recipientAddress = new web3_js_1.PublicKey(receiver);
+                        escrowAddress = new web3_js_1.PublicKey(pda);
+                        return [4 /*yield*/, INSTRUCTIONS.createPauseMultiTokenStreamInstruction(senderAddress, recipientAddress, escrowAddress, this._programId)];
+                    case 1:
+                        ix = _a.sent();
+                        tx = new web3_js_1.Transaction().add(__assign({}, ix));
+                        return [4 /*yield*/, this._connection.getLatestBlockhash()];
+                    case 2:
+                        recentHash = _a.sent();
+                        _a.label = 3;
+                    case 3:
+                        _a.trys.push([3, 5, , 6]);
+                        tx.recentBlockhash = recentHash.blockhash;
+                        tx.feePayer = this.walletProvider.publicKey;
+                        console.log("transaction ix after adding properties: ", tx);
+                        return [4 /*yield*/, this._signAndConfirm(tx)];
+                    case 4:
+                        res = _a.sent();
+                        console.log("response from sign and confirm: ", res);
+                        return [2 /*return*/, {
+                                status: "success",
+                                message: "paused token stream.",
+                                data: __assign({}, res)
+                            }];
+                    case 5:
+                        e_9 = _a.sent();
+                        return [2 /*return*/, {
+                                status: "error",
+                                message: e_9,
+                                data: null
+                            }];
+                    case 6: return [2 /*return*/];
+                }
+            });
+        });
+    };
+    TokenStream.prototype.resume = function (data) {
+        return __awaiter(this, void 0, void 0, function () {
+            var sender, receiver, pda, senderAddress, recipientAddress, escrowAddress, ix, tx, recentHash, res, e_10;
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0:
+                        sender = data.sender, receiver = data.receiver, pda = data.pda;
+                        senderAddress = new web3_js_1.PublicKey(sender);
+                        recipientAddress = new web3_js_1.PublicKey(receiver);
+                        escrowAddress = new web3_js_1.PublicKey(pda);
+                        return [4 /*yield*/, INSTRUCTIONS.createResumeMultiTokenStreamInstruction(senderAddress, recipientAddress, escrowAddress, this._programId)];
+                    case 1:
+                        ix = _a.sent();
+                        tx = new web3_js_1.Transaction().add(__assign({}, ix));
+                        return [4 /*yield*/, this._connection.getLatestBlockhash()];
+                    case 2:
+                        recentHash = _a.sent();
+                        _a.label = 3;
+                    case 3:
+                        _a.trys.push([3, 5, , 6]);
+                        tx.recentBlockhash = recentHash.blockhash;
+                        tx.feePayer = this.walletProvider.publicKey;
+                        console.log("transaction ix after adding properties: ", tx);
+                        return [4 /*yield*/, this._signAndConfirm(tx)];
+                    case 4:
+                        res = _a.sent();
+                        console.log("response from sign and confirm: ", res);
+                        return [2 /*return*/, {
+                                status: "success",
+                                message: "resumed token stream.",
+                                data: __assign({}, res)
+                            }];
+                    case 5:
+                        e_10 = _a.sent();
+                        return [2 /*return*/, {
+                                status: "error",
+                                message: e_10,
+                                data: null
+                            }];
+                    case 6: return [2 /*return*/];
+                }
+            });
+        });
+    };
+    TokenStream.prototype.cancel = function (data) {
+        return __awaiter(this, void 0, void 0, function () {
+            var sender, receiver, token, pda, senderAddress, recipientAddress, tokenMintAddress, escrowAddress, _a, withdrawEscrowAddress, _, _b, zebecWalletAddress, __, recipientAssociatedTokenAddress, zebecWalletAssociatedTokenAddress, feeAssociatedTokenAddress, ix, tx, recentHash, res, e_11;
+            return __generator(this, function (_c) {
+                switch (_c.label) {
+                    case 0:
+                        sender = data.sender, receiver = data.receiver, token = data.token, pda = data.pda;
+                        senderAddress = new web3_js_1.PublicKey(sender);
+                        recipientAddress = new web3_js_1.PublicKey(receiver);
+                        tokenMintAddress = new web3_js_1.PublicKey(token);
+                        escrowAddress = new web3_js_1.PublicKey(pda);
+                        return [4 /*yield*/, this._findWithDrawEscrowAccount(senderAddress, tokenMintAddress)];
+                    case 1:
+                        _a = _c.sent(), withdrawEscrowAddress = _a[0], _ = _a[1];
+                        return [4 /*yield*/, this._findZebecWalletAccount(senderAddress)];
+                    case 2:
+                        _b = _c.sent(), zebecWalletAddress = _b[0], __ = _b[1];
+                        return [4 /*yield*/, this._findAssociatedTokenAddress(recipientAddress, tokenMintAddress)];
+                    case 3:
+                        recipientAssociatedTokenAddress = _c.sent();
+                        return [4 /*yield*/, this._findAssociatedTokenAddress(zebecWalletAddress, tokenMintAddress)];
+                    case 4:
+                        zebecWalletAssociatedTokenAddress = _c.sent();
+                        return [4 /*yield*/, this._findAssociatedTokenAddress(new web3_js_1.PublicKey(constants_1.FEE_ADDRESS), tokenMintAddress)];
+                    case 5:
+                        feeAssociatedTokenAddress = _c.sent();
+                        return [4 /*yield*/, INSTRUCTIONS.createCancelMultiTokenStreamInstruction(senderAddress, recipientAddress, tokenMintAddress, zebecWalletAddress, escrowAddress, withdrawEscrowAddress, this._programId, recipientAssociatedTokenAddress, zebecWalletAssociatedTokenAddress, feeAssociatedTokenAddress)];
+                    case 6:
+                        ix = _c.sent();
+                        tx = new web3_js_1.Transaction().add(__assign({}, ix));
+                        return [4 /*yield*/, this._connection.getLatestBlockhash()];
+                    case 7:
+                        recentHash = _c.sent();
+                        _c.label = 8;
+                    case 8:
+                        _c.trys.push([8, 10, , 11]);
+                        tx.recentBlockhash = recentHash.blockhash;
+                        tx.feePayer = this.walletProvider.publicKey;
+                        console.log("transaction ix after adding properties: ", tx);
+                        return [4 /*yield*/, this._signAndConfirm(tx)];
+                    case 9:
+                        res = _c.sent();
+                        console.log("response from sign and confirm: ", res);
+                        return [2 /*return*/, {
+                                status: "success",
+                                message: "canceled token stream.",
+                                data: __assign({}, res)
+                            }];
+                    case 10:
+                        e_11 = _c.sent();
+                        return [2 /*return*/, {
+                                status: "error",
+                                message: e_11,
+                                data: null
+                            }];
+                    case 11: return [2 /*return*/];
+                }
+            });
+        });
+    };
+    TokenStream.prototype.withdraw = function (data) {
+        return __awaiter(this, void 0, void 0, function () {
+            var sender, receiver, token, pda, amount, senderAddress, recipientAddress, tokenMintAddress, escrowAddress, _TOKEN_PROGRAM_ID_, _SYSTEM_RENT, _A_TOKEN, _FEE_ADDRESS, _a, zebecWalletAddress, _, recipientAssociatedTokenAddress, zebecWalletAssociatedTokenAddress, feeAssociatedTokenAddress, _b, withdrawEscrowAddress, __, ix, tx, recentHash, res, e_12;
+            return __generator(this, function (_c) {
+                switch (_c.label) {
+                    case 0:
+                        sender = data.sender, receiver = data.receiver, token = data.token, pda = data.pda, amount = data.amount;
+                        senderAddress = new web3_js_1.PublicKey(sender);
+                        recipientAddress = new web3_js_1.PublicKey(receiver);
+                        tokenMintAddress = new web3_js_1.PublicKey(token);
+                        escrowAddress = new web3_js_1.PublicKey(pda);
+                        _TOKEN_PROGRAM_ID_ = new web3_js_1.PublicKey(constants_1._TOKEN_PROGRAM_ID);
+                        _SYSTEM_RENT = new web3_js_1.PublicKey(constants_1.SYSTEM_RENT);
+                        _A_TOKEN = new web3_js_1.PublicKey(constants_1.A_TOKEN);
+                        _FEE_ADDRESS = new web3_js_1.PublicKey(constants_1.FEE_ADDRESS);
+                        return [4 /*yield*/, this._findZebecWalletAccount(senderAddress)];
+                    case 1:
+                        _a = _c.sent(), zebecWalletAddress = _a[0], _ = _a[1];
+                        return [4 /*yield*/, this._findAssociatedTokenAddress(recipientAddress, tokenMintAddress)];
+                    case 2:
+                        recipientAssociatedTokenAddress = _c.sent();
+                        return [4 /*yield*/, this._findAssociatedTokenAddress(zebecWalletAddress, tokenMintAddress)];
+                    case 3:
+                        zebecWalletAssociatedTokenAddress = _c.sent();
+                        return [4 /*yield*/, this._findAssociatedTokenAddress(_FEE_ADDRESS, tokenMintAddress)];
+                    case 4:
+                        feeAssociatedTokenAddress = _c.sent();
+                        return [4 /*yield*/, this._findWithDrawEscrowAccount(senderAddress, tokenMintAddress)];
+                    case 5:
+                        _b = _c.sent(), withdrawEscrowAddress = _b[0], __ = _b[1];
+                        return [4 /*yield*/, INSTRUCTIONS.createWithdrawMultiTokenStreamInstruction(senderAddress, recipientAddress, zebecWalletAddress, escrowAddress, withdrawEscrowAddress, _TOKEN_PROGRAM_ID_, tokenMintAddress, _SYSTEM_RENT, zebecWalletAssociatedTokenAddress, recipientAssociatedTokenAddress, _A_TOKEN, _FEE_ADDRESS, feeAssociatedTokenAddress, this._programId, amount)];
+                    case 6:
+                        ix = _c.sent();
+                        tx = new web3_js_1.Transaction().add(__assign({}, ix));
+                        return [4 /*yield*/, this._connection.getLatestBlockhash()];
+                    case 7:
+                        recentHash = _c.sent();
+                        _c.label = 8;
+                    case 8:
+                        _c.trys.push([8, 10, , 11]);
+                        tx.recentBlockhash = recentHash.blockhash;
+                        tx.feePayer = this.walletProvider.publicKey;
+                        console.log("transaction ix after adding properties: ", tx);
+                        return [4 /*yield*/, this._signAndConfirm(tx)];
+                    case 9:
+                        res = _c.sent();
+                        console.log("response from sign and confirm: ", res);
+                        return [2 /*return*/, {
+                                status: "success",
+                                message: "withdraw token stream.",
+                                data: __assign({}, res)
+                            }];
+                    case 10:
+                        e_12 = _c.sent();
+                        return [2 /*return*/, {
+                                status: "error",
+                                message: e_12,
+                                data: null
+                            }];
+                    case 11: return [2 /*return*/];
+                }
+            });
+        });
+    };
+    return TokenStream;
+}(ZebecStream));
+exports.TokenStream = TokenStream;

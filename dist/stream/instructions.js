@@ -1,4 +1,15 @@
 "use strict";
+var __assign = (this && this.__assign) || function () {
+    __assign = Object.assign || function(t) {
+        for (var s, i = 1, n = arguments.length; i < n; i++) {
+            s = arguments[i];
+            for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p))
+                t[p] = s[p];
+        }
+        return t;
+    };
+    return __assign.apply(this, arguments);
+};
 var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
     if (k2 === undefined) k2 = k;
     var desc = Object.getOwnPropertyDescriptor(m, k);
@@ -59,7 +70,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
     }
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.createCancelSolStreamInstruction = exports.createResumeSolStreamInstruction = exports.createPauseSolStreamInstruction = exports.createInitSolStreamInstruction = exports.createMultiTokenStreamCancelInstruction = exports.createMultiTokenStreamResumeInstruction = exports.createMultiTokenStreamPauseInstruction = exports.createInitMultiTokenStreamInstruction = void 0;
+exports.createWithdrawSolStreamInstruction = exports.createWithdrawDepositedSolInstruction = exports.createDepositSolInstruction = exports.createCancelSolStreamInstruction = exports.createResumeSolStreamInstruction = exports.createPauseSolStreamInstruction = exports.createInitSolStreamInstruction = exports.createWithdrawMultiTokenStreamInstruction = exports.createCancelMultiTokenStreamInstruction = exports.createResumeMultiTokenStreamInstruction = exports.createPauseMultiTokenStreamInstruction = exports.createInitMultiTokenStreamInstruction = void 0;
 var buffer_1 = require("buffer");
 var borsh_1 = require("borsh");
 var web3_js_1 = require("@solana/web3.js");
@@ -68,7 +79,7 @@ var constants_1 = require("../constants");
 var createInitMultiTokenStreamInstruction = function (sender, recipient, tx_escrow, withdraw_escrow, programId, tokenMintAddress, start_time, end_time, amount) { return __awaiter(void 0, void 0, void 0, function () {
     var _TOKEN_PROGRAM_ID_, keys, ixData;
     return __generator(this, function (_a) {
-        _TOKEN_PROGRAM_ID_ = new web3_js_1.PublicKey(constants_1.TOKEN_PROGRAM_ID);
+        _TOKEN_PROGRAM_ID_ = new web3_js_1.PublicKey(constants_1._TOKEN_PROGRAM_ID);
         keys = [
             { pubkey: sender, isSigner: true, isWritable: true },
             { pubkey: recipient, isSigner: false, isWritable: true },
@@ -92,7 +103,7 @@ var createInitMultiTokenStreamInstruction = function (sender, recipient, tx_escr
     });
 }); };
 exports.createInitMultiTokenStreamInstruction = createInitMultiTokenStreamInstruction;
-var createMultiTokenStreamPauseInstruction = function (sender, recipient, tx_escrow, programId) { return __awaiter(void 0, void 0, void 0, function () {
+var createPauseMultiTokenStreamInstruction = function (sender, recipient, tx_escrow, programId) { return __awaiter(void 0, void 0, void 0, function () {
     var keys, ixData;
     return __generator(this, function (_a) {
         keys = [
@@ -111,8 +122,8 @@ var createMultiTokenStreamPauseInstruction = function (sender, recipient, tx_esc
             })];
     });
 }); };
-exports.createMultiTokenStreamPauseInstruction = createMultiTokenStreamPauseInstruction;
-var createMultiTokenStreamResumeInstruction = function (sender, recipient, tx_escrow, programId) { return __awaiter(void 0, void 0, void 0, function () {
+exports.createPauseMultiTokenStreamInstruction = createPauseMultiTokenStreamInstruction;
+var createResumeMultiTokenStreamInstruction = function (sender, recipient, tx_escrow, programId) { return __awaiter(void 0, void 0, void 0, function () {
     var keys, ixData;
     return __generator(this, function (_a) {
         keys = [
@@ -131,14 +142,14 @@ var createMultiTokenStreamResumeInstruction = function (sender, recipient, tx_es
             })];
     });
 }); };
-exports.createMultiTokenStreamResumeInstruction = createMultiTokenStreamResumeInstruction;
-var createMultiTokenStreamCancelInstruction = function (sender, recipient, token, zebecVaultAddress, tx_escrow, withdraw_data, programId, recipientAssociatedTokenAddress, txEscrowAssociatedTokenAddress, feeAssociatedTokenAddress) { return __awaiter(void 0, void 0, void 0, function () {
+exports.createResumeMultiTokenStreamInstruction = createResumeMultiTokenStreamInstruction;
+var createCancelMultiTokenStreamInstruction = function (sender, recipient, token, zebecVaultAddress, tx_escrow, withdraw_data, programId, recipientAssociatedTokenAddress, txEscrowAssociatedTokenAddress, feeAssociatedTokenAddress) { return __awaiter(void 0, void 0, void 0, function () {
     var FEE_ACCOUNT_ADDRESS, A_TOKEN_Address, SYSTEM_RENT_ADDRESS, TOKEN_PROGRAM_ID_ADDRESS, keys, ixData;
     return __generator(this, function (_a) {
         FEE_ACCOUNT_ADDRESS = new web3_js_1.PublicKey(constants_1.FEE_ADDRESS);
         A_TOKEN_Address = new web3_js_1.PublicKey(constants_1.A_TOKEN);
         SYSTEM_RENT_ADDRESS = new web3_js_1.PublicKey(constants_1.SYSTEM_RENT);
-        TOKEN_PROGRAM_ID_ADDRESS = new web3_js_1.PublicKey(constants_1.TOKEN_PROGRAM_ID);
+        TOKEN_PROGRAM_ID_ADDRESS = new web3_js_1.PublicKey(constants_1._TOKEN_PROGRAM_ID);
         keys = [
             { pubkey: sender, isSigner: true, isWritable: true },
             { pubkey: recipient, isSigner: false, isWritable: true },
@@ -165,7 +176,38 @@ var createMultiTokenStreamCancelInstruction = function (sender, recipient, token
             })];
     });
 }); };
-exports.createMultiTokenStreamCancelInstruction = createMultiTokenStreamCancelInstruction;
+exports.createCancelMultiTokenStreamInstruction = createCancelMultiTokenStreamInstruction;
+var createWithdrawMultiTokenStreamInstruction = function (senderAddress, recipientAddress, zebecWalletAddress, escrowAddress, withdrawEscrowAddress, _TOKEN_PROGRAM_ID_, tokenMintAddress, _SYSTEM_RENT, zebecWalletAssociatedTokenAddress, recipientAssociatedTokenAddress, _A_TOKEN, _FEE_ADDRESS, feeAssociatedTokenAddress, programId, amount) { return __awaiter(void 0, void 0, void 0, function () {
+    var keys, ixData;
+    return __generator(this, function (_a) {
+        keys = [
+            { pubkey: senderAddress, isSigner: false, isWritable: true },
+            { pubkey: recipientAddress, isSigner: true, isWritable: true },
+            { pubkey: zebecWalletAddress, isSigner: false, isWritable: true },
+            { pubkey: escrowAddress, isSigner: false, isWritable: true },
+            { pubkey: withdrawEscrowAddress, isSigner: false, isWritable: true },
+            { pubkey: _TOKEN_PROGRAM_ID_, isSigner: false, isWritable: false },
+            { pubkey: tokenMintAddress, isSigner: false, isWritable: true },
+            { pubkey: _SYSTEM_RENT, isSigner: false, isWritable: false },
+            { pubkey: zebecWalletAssociatedTokenAddress, isSigner: false, isWritable: true },
+            { pubkey: recipientAssociatedTokenAddress, isSigner: false, isWritable: true },
+            { pubkey: _A_TOKEN, isSigner: false, isWritable: false },
+            { pubkey: web3_js_1.SystemProgram.programId, isSigner: false, isWritable: false },
+            { pubkey: _FEE_ADDRESS, isSigner: false, isWritable: true },
+            { pubkey: feeAssociatedTokenAddress, isSigner: false, isWritable: true },
+        ];
+        ixData = {
+            instruction: constants_1.INSTRUCTION.WITHDRAW_TOKEN_STREAM,
+            amount: amount
+        };
+        return [2 /*return*/, new web3_js_1.TransactionInstruction({
+                keys: keys,
+                programId: programId,
+                data: buffer_1.Buffer.from((0, borsh_1.serialize)(SCHEMA.WithdrawMultiTokenStreamSchema, new SCHEMA.WithdrawMultiTokenStream(__assign({}, ixData))))
+            })];
+    });
+}); };
+exports.createWithdrawMultiTokenStreamInstruction = createWithdrawMultiTokenStreamInstruction;
 var createInitSolStreamInstruction = function (sender, receipient, tx_escrow, withdraw_escrow, programId, start_time, end_time, amount) { return __awaiter(void 0, void 0, void 0, function () {
     var keys, ixData;
     return __generator(this, function (_a) {
@@ -254,3 +296,69 @@ var createCancelSolStreamInstruction = function (sender, recipient, tx_escrow, z
     });
 }); };
 exports.createCancelSolStreamInstruction = createCancelSolStreamInstruction;
+var createDepositSolInstruction = function (sender, zebecWalletAddress, amount, programId) { return __awaiter(void 0, void 0, void 0, function () {
+    var keys, ixData;
+    return __generator(this, function (_a) {
+        keys = [
+            { pubkey: sender, isSigner: true, isWritable: true },
+            { pubkey: zebecWalletAddress, isSigner: false, isWritable: true },
+            { pubkey: web3_js_1.SystemProgram.programId, isSigner: false, isWritable: false }
+        ];
+        ixData = {
+            instruction: constants_1.INSTRUCTION.DEPOSIT_SOL,
+            amount: amount
+        };
+        return [2 /*return*/, new web3_js_1.TransactionInstruction({
+                keys: keys,
+                programId: programId,
+                data: buffer_1.Buffer.from((0, borsh_1.serialize)(SCHEMA.DepositSolSchema, new SCHEMA.DepositSol(ixData)))
+            })];
+    });
+}); };
+exports.createDepositSolInstruction = createDepositSolInstruction;
+var createWithdrawDepositedSolInstruction = function (senderAddress, zebecWalletAddress, withdrawEscrowAddress, amount, programId) { return __awaiter(void 0, void 0, void 0, function () {
+    var keys, ixData;
+    return __generator(this, function (_a) {
+        keys = [
+            { pubkey: senderAddress, isSigner: true, isWritable: true },
+            { pubkey: zebecWalletAddress, isSigner: false, isWritable: true },
+            { pubkey: withdrawEscrowAddress, isSigner: false, isWritable: true },
+            { pubkey: web3_js_1.SystemProgram.programId, isSigner: false, isWritable: false }
+        ];
+        ixData = {
+            instruction: constants_1.INSTRUCTION.WITHDRAW_SOL,
+            amount: amount
+        };
+        return [2 /*return*/, new web3_js_1.TransactionInstruction({
+                keys: keys,
+                programId: programId,
+                data: buffer_1.Buffer.from((0, borsh_1.serialize)(SCHEMA.WithdrawDepositedSolSchema, new SCHEMA.WithdrawDepositedSol(ixData)))
+            })];
+    });
+}); };
+exports.createWithdrawDepositedSolInstruction = createWithdrawDepositedSolInstruction;
+var createWithdrawSolStreamInstruction = function (senderAddress, receipientAddress, txEscrowAddress, zebecWalletAddress, withdrawEscrowAddress, amount, programId) { return __awaiter(void 0, void 0, void 0, function () {
+    var feeAddress, keys, ixData;
+    return __generator(this, function (_a) {
+        feeAddress = new web3_js_1.PublicKey(constants_1.FEE_ADDRESS);
+        keys = [
+            { pubkey: senderAddress, isSigner: false, isWritable: true },
+            { pubkey: receipientAddress, isSigner: true, isWritable: true },
+            { pubkey: zebecWalletAddress, isSigner: false, isWritable: true },
+            { pubkey: txEscrowAddress, isSigner: false, isWritable: true },
+            { pubkey: withdrawEscrowAddress, isSigner: false, isWritable: true },
+            { pubkey: web3_js_1.SystemProgram.programId, isSigner: false, isWritable: false },
+            { pubkey: feeAddress, isSigner: false, isWritable: true }
+        ];
+        ixData = {
+            instruction: constants_1.INSTRUCTION.WITHDRAW_SOL_STREAM,
+            amount: amount
+        };
+        return [2 /*return*/, new web3_js_1.TransactionInstruction({
+                keys: keys,
+                programId: programId,
+                data: buffer_1.Buffer.from((0, borsh_1.serialize)(SCHEMA.WithdrawStreamSolSchema, new SCHEMA.WithdrawStreamSol(ixData)))
+            })];
+    });
+}); };
+exports.createWithdrawSolStreamInstruction = createWithdrawSolStreamInstruction;

@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.RPC_ENDPOINTS = exports.SPL_ASSOCIATED_TOKEN_ACCOUNT_PROGRAM_ID = exports.SYSTEM_RENT = exports.A_TOKEN = exports.ZEBEC_PROGRAM_ID = exports.WITHDRAW_SOL_STRING = exports.TOKEN_PROGRAM_ID = exports.FEE_ADDRESS = exports.INSTRUCTION = void 0;
+exports.RPC_ENDPOINTS = exports.WITHDRAW_TOKEN_STRING = exports.SPL_ASSOCIATED_TOKEN_ACCOUNT_PROGRAM_ID = exports.SYSTEM_RENT = exports.A_TOKEN = exports.ZEBEC_PROGRAM_ID = exports.WITHDRAW_SOL_STRING = exports._TOKEN_PROGRAM_ID = exports.FEE_ADDRESS = exports.INSTRUCTION = void 0;
 var INSTRUCTION;
 (function (INSTRUCTION) {
     INSTRUCTION[INSTRUCTION["INIIT_SOL_STREAM"] = 0] = "INIIT_SOL_STREAM";
@@ -44,16 +44,17 @@ var INSTRUCTION;
     INSTRUCTION[INSTRUCTION["REJECT_TRANSFER_TOKEN"] = 38] = "REJECT_TRANSFER_TOKEN";
 })(INSTRUCTION = exports.INSTRUCTION || (exports.INSTRUCTION = {}));
 exports.FEE_ADDRESS = "EsDV3m3xUZ7g8QKa1kFdbZT18nNz8ddGJRcTK84WDQ7k";
-exports.TOKEN_PROGRAM_ID = "TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA";
+exports._TOKEN_PROGRAM_ID = "TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA";
 exports.WITHDRAW_SOL_STRING = "withdraw_sol";
 exports.ZEBEC_PROGRAM_ID = "AknC341xog56SrnoK6j3mUvaD1Y7tYayx1sxUGpeYWdX";
 exports.A_TOKEN = "ATokenGPvbdGVxr1b2hvZbsiqW5xWH25efTNsLJA8knL";
 exports.SYSTEM_RENT = "SysvarRent111111111111111111111111111111111";
 exports.SPL_ASSOCIATED_TOKEN_ACCOUNT_PROGRAM_ID = "ATokenGPvbdGVxr1b2hvZbsiqW5xWH25efTNsLJA8knL";
+exports.WITHDRAW_TOKEN_STRING = "withdraw_token";
 var RPC_ENDPOINTS;
 (function (RPC_ENDPOINTS) {
     RPC_ENDPOINTS["DEVNET"] = "https://api.devnet.solana.com";
     RPC_ENDPOINTS["MAINNET"] = "https://api.mainnet-beta.solana.com";
     RPC_ENDPOINTS["TESTNET"] = "https;//api.testnet.solana.com";
-    RPC_ENDPOINTS["DEFAULT"] = "https://api.mainnet-beta.solana.com";
+    RPC_ENDPOINTS["DEFAULT"] = "https://api.devnet.solana.com";
 })(RPC_ENDPOINTS = exports.RPC_ENDPOINTS || (exports.RPC_ENDPOINTS = {}));

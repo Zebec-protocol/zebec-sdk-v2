@@ -15,23 +15,47 @@ var __extends = (this && this.__extends) || (function () {
     };
 })();
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.CancelSolStreamSchema = exports.ResumeSolStreamSchema = exports.PauseSolStreamSchema = exports.InitSolStreamSchema = exports.InitMultiTokenStreamSchema = exports.PauseMultiTokenStreamSchema = exports.ResumeMultiTokenStreamSchema = exports.CancelMultiTokenStreamSchema = exports.CancelMultiTokenStream = exports.ResumeMultiTokenStream = exports.PauseMultiTokenStream = exports.InitMultiTokenStream = exports.CancelSolStream = exports.ResumeSolStream = exports.PauseSolStream = exports.InitSolStream = void 0;
-var Stream = /** @class */ (function () {
-    function Stream(properties) {
+exports.CancelSolStreamSchema = exports.ResumeSolStreamSchema = exports.PauseSolStreamSchema = exports.InitSolStreamSchema = exports.WithdrawStreamSolSchema = exports.WithdrawDepositedSolSchema = exports.DepositSolSchema = exports.WithdrawMultiTokenStreamSchema = exports.InitMultiTokenStreamSchema = exports.PauseMultiTokenStreamSchema = exports.ResumeMultiTokenStreamSchema = exports.CancelMultiTokenStreamSchema = exports.WithdrawMultiTokenStream = exports.CancelMultiTokenStream = exports.ResumeMultiTokenStream = exports.PauseMultiTokenStream = exports.InitMultiTokenStream = exports.CancelSolStream = exports.ResumeSolStream = exports.PauseSolStream = exports.InitSolStream = exports.WithdrawStreamSol = exports.WithdrawDepositedSol = exports.DepositSol = void 0;
+var Base = /** @class */ (function () {
+    function Base(properties) {
         var _this = this;
         Object.keys(properties).map(function (key) {
             return (_this[key] = properties[key]);
         });
     }
-    return Stream;
+    return Base;
 }());
+var DepositSol = /** @class */ (function (_super) {
+    __extends(DepositSol, _super);
+    function DepositSol() {
+        return _super !== null && _super.apply(this, arguments) || this;
+    }
+    return DepositSol;
+}(Base));
+exports.DepositSol = DepositSol;
+var WithdrawDepositedSol = /** @class */ (function (_super) {
+    __extends(WithdrawDepositedSol, _super);
+    function WithdrawDepositedSol() {
+        return _super !== null && _super.apply(this, arguments) || this;
+    }
+    return WithdrawDepositedSol;
+}(Base));
+exports.WithdrawDepositedSol = WithdrawDepositedSol;
+var WithdrawStreamSol = /** @class */ (function (_super) {
+    __extends(WithdrawStreamSol, _super);
+    function WithdrawStreamSol() {
+        return _super !== null && _super.apply(this, arguments) || this;
+    }
+    return WithdrawStreamSol;
+}(Base));
+exports.WithdrawStreamSol = WithdrawStreamSol;
 var InitSolStream = /** @class */ (function (_super) {
     __extends(InitSolStream, _super);
     function InitSolStream() {
         return _super !== null && _super.apply(this, arguments) || this;
     }
     return InitSolStream;
-}(Stream));
+}(Base));
 exports.InitSolStream = InitSolStream;
 var PauseSolStream = /** @class */ (function (_super) {
     __extends(PauseSolStream, _super);
@@ -39,7 +63,7 @@ var PauseSolStream = /** @class */ (function (_super) {
         return _super !== null && _super.apply(this, arguments) || this;
     }
     return PauseSolStream;
-}(Stream));
+}(Base));
 exports.PauseSolStream = PauseSolStream;
 var ResumeSolStream = /** @class */ (function (_super) {
     __extends(ResumeSolStream, _super);
@@ -47,7 +71,7 @@ var ResumeSolStream = /** @class */ (function (_super) {
         return _super !== null && _super.apply(this, arguments) || this;
     }
     return ResumeSolStream;
-}(Stream));
+}(Base));
 exports.ResumeSolStream = ResumeSolStream;
 var CancelSolStream = /** @class */ (function (_super) {
     __extends(CancelSolStream, _super);
@@ -55,7 +79,7 @@ var CancelSolStream = /** @class */ (function (_super) {
         return _super !== null && _super.apply(this, arguments) || this;
     }
     return CancelSolStream;
-}(Stream));
+}(Base));
 exports.CancelSolStream = CancelSolStream;
 var InitMultiTokenStream = /** @class */ (function (_super) {
     __extends(InitMultiTokenStream, _super);
@@ -63,7 +87,7 @@ var InitMultiTokenStream = /** @class */ (function (_super) {
         return _super !== null && _super.apply(this, arguments) || this;
     }
     return InitMultiTokenStream;
-}(Stream));
+}(Base));
 exports.InitMultiTokenStream = InitMultiTokenStream;
 var PauseMultiTokenStream = /** @class */ (function (_super) {
     __extends(PauseMultiTokenStream, _super);
@@ -71,7 +95,7 @@ var PauseMultiTokenStream = /** @class */ (function (_super) {
         return _super !== null && _super.apply(this, arguments) || this;
     }
     return PauseMultiTokenStream;
-}(Stream));
+}(Base));
 exports.PauseMultiTokenStream = PauseMultiTokenStream;
 var ResumeMultiTokenStream = /** @class */ (function (_super) {
     __extends(ResumeMultiTokenStream, _super);
@@ -79,7 +103,7 @@ var ResumeMultiTokenStream = /** @class */ (function (_super) {
         return _super !== null && _super.apply(this, arguments) || this;
     }
     return ResumeMultiTokenStream;
-}(Stream));
+}(Base));
 exports.ResumeMultiTokenStream = ResumeMultiTokenStream;
 var CancelMultiTokenStream = /** @class */ (function (_super) {
     __extends(CancelMultiTokenStream, _super);
@@ -87,8 +111,16 @@ var CancelMultiTokenStream = /** @class */ (function (_super) {
         return _super !== null && _super.apply(this, arguments) || this;
     }
     return CancelMultiTokenStream;
-}(Stream));
+}(Base));
 exports.CancelMultiTokenStream = CancelMultiTokenStream;
+var WithdrawMultiTokenStream = /** @class */ (function (_super) {
+    __extends(WithdrawMultiTokenStream, _super);
+    function WithdrawMultiTokenStream() {
+        return _super !== null && _super.apply(this, arguments) || this;
+    }
+    return WithdrawMultiTokenStream;
+}(Base));
+exports.WithdrawMultiTokenStream = WithdrawMultiTokenStream;
 exports.CancelMultiTokenStreamSchema = new Map([
     [
         CancelMultiTokenStream,
@@ -132,6 +164,54 @@ exports.InitMultiTokenStreamSchema = new Map([
                 ["start_time", "u64"],
                 ["end_time", "u64"],
                 ["amount", "u64"],
+            ]
+        }
+    ]
+]);
+exports.WithdrawMultiTokenStreamSchema = new Map([
+    [
+        WithdrawMultiTokenStream,
+        {
+            kind: "struct",
+            fields: [
+                ["instruction", "u8"],
+                ["amount", "u64"]
+            ]
+        }
+    ]
+]);
+exports.DepositSolSchema = new Map([
+    [
+        DepositSol,
+        {
+            kind: "struct",
+            fields: [
+                ["instruction", "u8"],
+                ["amount", "u64"]
+            ]
+        }
+    ]
+]);
+exports.WithdrawDepositedSolSchema = new Map([
+    [
+        WithdrawDepositedSol,
+        {
+            kind: "struct",
+            fields: [
+                ["instruction", "u8"],
+                ["amount", "u64"]
+            ]
+        }
+    ]
+]);
+exports.WithdrawStreamSolSchema = new Map([
+    [
+        WithdrawStreamSol,
+        {
+            kind: "struct",
+            fields: [
+                ["instruction", "u8"],
+                ["amount", "u64"]
             ]
         }
     ]
