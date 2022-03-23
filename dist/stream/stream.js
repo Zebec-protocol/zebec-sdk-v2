@@ -166,7 +166,7 @@ var NativeStream = /** @class */ (function (_super) {
                     case 2:
                         ix = _b.sent();
                         tx = new web3_js_1.Transaction().add(__assign({}, ix));
-                        return [4 /*yield*/, this._connection.getLatestBlockhash()];
+                        return [4 /*yield*/, this._connection.getRecentBlockhash()];
                     case 3:
                         recentHash = _b.sent();
                         _b.label = 4;
@@ -215,7 +215,7 @@ var NativeStream = /** @class */ (function (_super) {
                     case 3:
                         ix = _c.sent();
                         tx = new web3_js_1.Transaction().add(__assign({}, ix));
-                        return [4 /*yield*/, this._connection.getLatestBlockhash()];
+                        return [4 /*yield*/, this._connection.getRecentBlockhash()];
                     case 4:
                         recentHash = _c.sent();
                         _c.label = 5;
@@ -263,7 +263,7 @@ var NativeStream = /** @class */ (function (_super) {
                     case 2:
                         ix = _b.sent();
                         tx = new web3_js_1.Transaction().add(__assign({}, ix));
-                        return [4 /*yield*/, this._connection.getLatestBlockhash()];
+                        return [4 /*yield*/, this._connection.getRecentBlockhash()];
                     case 3:
                         recentHash = _b.sent();
                         _b.label = 4;
@@ -309,7 +309,7 @@ var NativeStream = /** @class */ (function (_super) {
                     case 1:
                         ix = _a.sent();
                         tx = new web3_js_1.Transaction().add(__assign({}, ix));
-                        return [4 /*yield*/, this._connection.getLatestBlockhash()];
+                        return [4 /*yield*/, this._connection.getRecentBlockhash()];
                     case 2:
                         recentHash = _a.sent();
                         _a.label = 3;
@@ -354,7 +354,7 @@ var NativeStream = /** @class */ (function (_super) {
                     case 1:
                         ix = _a.sent();
                         tx = new web3_js_1.Transaction().add(__assign({}, ix));
-                        return [4 /*yield*/, this._connection.getLatestBlockhash()];
+                        return [4 /*yield*/, this._connection.getRecentBlockhash()];
                     case 2:
                         recentHash = _a.sent();
                         _a.label = 3;
@@ -405,7 +405,7 @@ var NativeStream = /** @class */ (function (_super) {
                     case 3:
                         ix = _c.sent();
                         tx = new web3_js_1.Transaction().add(__assign({}, ix));
-                        return [4 /*yield*/, this._connection.getLatestBlockhash()];
+                        return [4 /*yield*/, this._connection.getRecentBlockhash()];
                     case 4:
                         recentHash = _c.sent();
                         _c.label = 5;
@@ -456,7 +456,7 @@ var NativeStream = /** @class */ (function (_super) {
                     case 3:
                         ix = _c.sent();
                         tx = new web3_js_1.Transaction().add(__assign({}, ix));
-                        return [4 /*yield*/, this._connection.getLatestBlockhash()];
+                        return [4 /*yield*/, this._connection.getRecentBlockhash()];
                     case 4:
                         recentHash = _c.sent();
                         _c.label = 5;
@@ -536,7 +536,7 @@ var TokenStream = /** @class */ (function (_super) {
                     case 2:
                         ix = _b.sent();
                         tx = new web3_js_1.Transaction().add(__assign({}, ix));
-                        return [4 /*yield*/, this._connection.getLatestBlockhash()];
+                        return [4 /*yield*/, this._connection.getRecentBlockhash()];
                     case 3:
                         recentHash = _b.sent();
                         _b.label = 4;
@@ -581,7 +581,7 @@ var TokenStream = /** @class */ (function (_super) {
                     case 1:
                         ix = _a.sent();
                         tx = new web3_js_1.Transaction().add(__assign({}, ix));
-                        return [4 /*yield*/, this._connection.getLatestBlockhash()];
+                        return [4 /*yield*/, this._connection.getRecentBlockhash()];
                     case 2:
                         recentHash = _a.sent();
                         _a.label = 3;
@@ -625,7 +625,7 @@ var TokenStream = /** @class */ (function (_super) {
                     case 1:
                         ix = _a.sent();
                         tx = new web3_js_1.Transaction().add(__assign({}, ix));
-                        return [4 /*yield*/, this._connection.getLatestBlockhash()];
+                        return [4 /*yield*/, this._connection.getRecentBlockhash()];
                     case 2:
                         recentHash = _a.sent();
                         _a.label = 3;
@@ -685,7 +685,7 @@ var TokenStream = /** @class */ (function (_super) {
                     case 6:
                         ix = _c.sent();
                         tx = new web3_js_1.Transaction().add(__assign({}, ix));
-                        return [4 /*yield*/, this._connection.getLatestBlockhash()];
+                        return [4 /*yield*/, this._connection.getRecentBlockhash()];
                     case 7:
                         recentHash = _c.sent();
                         _c.label = 8;
@@ -749,7 +749,7 @@ var TokenStream = /** @class */ (function (_super) {
                     case 6:
                         ix = _c.sent();
                         tx = new web3_js_1.Transaction().add(__assign({}, ix));
-                        return [4 /*yield*/, this._connection.getLatestBlockhash()];
+                        return [4 /*yield*/, this._connection.getRecentBlockhash()];
                     case 7:
                         recentHash = _c.sent();
                         _c.label = 8;
