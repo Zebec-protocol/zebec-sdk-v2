@@ -248,7 +248,7 @@ var createWithdrawDepositedTokenInstruction = function (senderAddress, tokenProg
             { pubkey: web3_js_1.SystemProgram.programId, isSigner: false, isWritable: false }
         ];
         ixData = {
-            instruction: constants_1.INSTRUCTION.WITHDRAW_TOKEN_STREAM,
+            instruction: constants_1.INSTRUCTION.WITHDRAW_TOKEN,
             amount: (amount * web3_js_1.LAMPORTS_PER_SOL).toString()
         };
         return [2 /*return*/, new web3_js_1.TransactionInstruction({

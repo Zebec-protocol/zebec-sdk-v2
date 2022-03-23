@@ -249,7 +249,7 @@ export const createWithdrawDepositedTokenInstruction = async(
     ]
 
     const ixData = {
-        instruction: INSTRUCTION.WITHDRAW_TOKEN_STREAM,
+        instruction: INSTRUCTION.WITHDRAW_TOKEN,
         amount: (amount * LAMPORTS_PER_SOL).toString()
     }
 

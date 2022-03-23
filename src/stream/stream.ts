@@ -415,11 +415,7 @@ export class TokenStream extends ZebecStream {
 
     protected async _findAssociatedTokenAddress(walletAddress: PublicKey, tokenMintAddress: PublicKey): Promise<PublicKey> {
         return (await PublicKey.findProgramAddress(
-            [
-                walletAddress.toBuffer(),
-                TOKEN_PROGRAM_ID.toBuffer(),
-                tokenMintAddress.toBuffer(),
-            ],
+            [ walletAddress.toBuffer(), TOKEN_PROGRAM_ID.toBuffer(), tokenMintAddress.toBuffer(),],
             new PublicKey(SPL_ASSOCIATED_TOKEN_ACCOUNT_PROGRAM_ID)
         ))[0];
     }
