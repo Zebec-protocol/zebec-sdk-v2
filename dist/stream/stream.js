@@ -510,10 +510,14 @@ var TokenStream = /** @class */ (function (_super) {
     };
     TokenStream.prototype._findAssociatedTokenAddress = function (walletAddress, tokenMintAddress) {
         return __awaiter(this, void 0, void 0, function () {
+            var associatedTokenAddress;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0: return [4 /*yield*/, web3_js_1.PublicKey.findProgramAddress([walletAddress.toBuffer(), spl_token_1.TOKEN_PROGRAM_ID.toBuffer(), tokenMintAddress.toBuffer()], new web3_js_1.PublicKey(constants_1.SPL_ASSOCIATED_TOKEN_ACCOUNT_PROGRAM_ID))[0]];
-                    case 1: return [2 /*return*/, _a.sent()];
+                    case 1:
+                        associatedTokenAddress = _a.sent();
+                        console.log("Associated token address of ".concat(walletAddress.toBase58(), " is: "), associatedTokenAddress, associatedTokenAddress.toBase58());
+                        return [2 /*return*/, associatedTokenAddress];
                 }
             });
         });
