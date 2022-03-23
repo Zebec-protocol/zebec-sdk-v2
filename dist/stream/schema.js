@@ -15,7 +15,7 @@ var __extends = (this && this.__extends) || (function () {
     };
 })();
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.CancelSolStreamSchema = exports.ResumeSolStreamSchema = exports.PauseSolStreamSchema = exports.InitSolStreamSchema = exports.WithdrawStreamSolSchema = exports.WithdrawDepositedSolSchema = exports.DepositSolSchema = exports.WithdrawMultiTokenStreamSchema = exports.InitMultiTokenStreamSchema = exports.PauseMultiTokenStreamSchema = exports.ResumeMultiTokenStreamSchema = exports.CancelMultiTokenStreamSchema = exports.WithdrawMultiTokenStream = exports.CancelMultiTokenStream = exports.ResumeMultiTokenStream = exports.PauseMultiTokenStream = exports.InitMultiTokenStream = exports.CancelSolStream = exports.ResumeSolStream = exports.PauseSolStream = exports.InitSolStream = exports.WithdrawStreamSol = exports.WithdrawDepositedSol = exports.DepositSol = void 0;
+exports.CancelSolStreamSchema = exports.ResumeSolStreamSchema = exports.PauseSolStreamSchema = exports.InitSolStreamSchema = exports.WithdrawStreamSolSchema = exports.WithdrawDepositedSolSchema = exports.DepositSolSchema = exports.WithdrawDepositedTokenSchema = exports.DepositTokenSchema = exports.WithdrawMultiTokenStreamSchema = exports.InitMultiTokenStreamSchema = exports.PauseMultiTokenStreamSchema = exports.ResumeMultiTokenStreamSchema = exports.CancelMultiTokenStreamSchema = exports.WithdrawDepositedToken = exports.WithdrawMultiTokenStream = exports.CancelMultiTokenStream = exports.ResumeMultiTokenStream = exports.PauseMultiTokenStream = exports.InitMultiTokenStream = exports.DepositToken = exports.CancelSolStream = exports.ResumeSolStream = exports.PauseSolStream = exports.InitSolStream = exports.WithdrawStreamSol = exports.WithdrawDepositedSol = exports.DepositSol = void 0;
 var Base = /** @class */ (function () {
     function Base(properties) {
         var _this = this;
@@ -81,6 +81,14 @@ var CancelSolStream = /** @class */ (function (_super) {
     return CancelSolStream;
 }(Base));
 exports.CancelSolStream = CancelSolStream;
+var DepositToken = /** @class */ (function (_super) {
+    __extends(DepositToken, _super);
+    function DepositToken() {
+        return _super !== null && _super.apply(this, arguments) || this;
+    }
+    return DepositToken;
+}(Base));
+exports.DepositToken = DepositToken;
 var InitMultiTokenStream = /** @class */ (function (_super) {
     __extends(InitMultiTokenStream, _super);
     function InitMultiTokenStream() {
@@ -121,6 +129,14 @@ var WithdrawMultiTokenStream = /** @class */ (function (_super) {
     return WithdrawMultiTokenStream;
 }(Base));
 exports.WithdrawMultiTokenStream = WithdrawMultiTokenStream;
+var WithdrawDepositedToken = /** @class */ (function (_super) {
+    __extends(WithdrawDepositedToken, _super);
+    function WithdrawDepositedToken() {
+        return _super !== null && _super.apply(this, arguments) || this;
+    }
+    return WithdrawDepositedToken;
+}(Base));
+exports.WithdrawDepositedToken = WithdrawDepositedToken;
 exports.CancelMultiTokenStreamSchema = new Map([
     [
         CancelMultiTokenStream,
@@ -171,6 +187,30 @@ exports.InitMultiTokenStreamSchema = new Map([
 exports.WithdrawMultiTokenStreamSchema = new Map([
     [
         WithdrawMultiTokenStream,
+        {
+            kind: "struct",
+            fields: [
+                ["instruction", "u8"],
+                ["amount", "u64"]
+            ]
+        }
+    ]
+]);
+exports.DepositTokenSchema = new Map([
+    [
+        DepositToken,
+        {
+            kind: "struct",
+            fields: [
+                ["instruction", "u8"],
+                ["amount", "u64"]
+            ]
+        }
+    ]
+]);
+exports.WithdrawDepositedTokenSchema = new Map([
+    [
+        WithdrawDepositedToken,
         {
             kind: "struct",
             fields: [

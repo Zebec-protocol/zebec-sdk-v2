@@ -70,7 +70,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
     }
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.createWithdrawSolStreamInstruction = exports.createWithdrawDepositedSolInstruction = exports.createDepositSolInstruction = exports.createCancelSolStreamInstruction = exports.createResumeSolStreamInstruction = exports.createPauseSolStreamInstruction = exports.createInitSolStreamInstruction = exports.createWithdrawMultiTokenStreamInstruction = exports.createCancelMultiTokenStreamInstruction = exports.createResumeMultiTokenStreamInstruction = exports.createPauseMultiTokenStreamInstruction = exports.createInitMultiTokenStreamInstruction = void 0;
+exports.createWithdrawSolStreamInstruction = exports.createWithdrawDepositedSolInstruction = exports.createDepositSolInstruction = exports.createCancelSolStreamInstruction = exports.createResumeSolStreamInstruction = exports.createPauseSolStreamInstruction = exports.createInitSolStreamInstruction = exports.createWithdrawDepositedTokenInstruction = exports.createDepositMultiTokenInstruction = exports.createWithdrawMultiTokenStreamInstruction = exports.createCancelMultiTokenStreamInstruction = exports.createResumeMultiTokenStreamInstruction = exports.createPauseMultiTokenStreamInstruction = exports.createInitMultiTokenStreamInstruction = void 0;
 var buffer_1 = require("buffer");
 var borsh_1 = require("borsh");
 var web3_js_1 = require("@solana/web3.js");
@@ -144,10 +144,10 @@ var createResumeMultiTokenStreamInstruction = function (sender, recipient, tx_es
 }); };
 exports.createResumeMultiTokenStreamInstruction = createResumeMultiTokenStreamInstruction;
 var createCancelMultiTokenStreamInstruction = function (sender, recipient, token, zebecVaultAddress, tx_escrow, withdraw_data, programId, recipientAssociatedTokenAddress, txEscrowAssociatedTokenAddress, feeAssociatedTokenAddress) { return __awaiter(void 0, void 0, void 0, function () {
-    var FEE_ACCOUNT_ADDRESS, A_TOKEN_Address, SYSTEM_RENT_ADDRESS, TOKEN_PROGRAM_ID_ADDRESS, keys, ixData;
+    var FEE_ACCOUNT_ADDRESS, A_TOKEN_ADDRESS, SYSTEM_RENT_ADDRESS, TOKEN_PROGRAM_ID_ADDRESS, keys, ixData;
     return __generator(this, function (_a) {
         FEE_ACCOUNT_ADDRESS = new web3_js_1.PublicKey(constants_1.FEE_ADDRESS);
-        A_TOKEN_Address = new web3_js_1.PublicKey(constants_1.A_TOKEN);
+        A_TOKEN_ADDRESS = new web3_js_1.PublicKey(constants_1.A_TOKEN);
         SYSTEM_RENT_ADDRESS = new web3_js_1.PublicKey(constants_1.SYSTEM_RENT);
         TOKEN_PROGRAM_ID_ADDRESS = new web3_js_1.PublicKey(constants_1._TOKEN_PROGRAM_ID);
         keys = [
@@ -161,7 +161,7 @@ var createCancelMultiTokenStreamInstruction = function (sender, recipient, token
             { pubkey: SYSTEM_RENT_ADDRESS, isSigner: false, isWritable: false },
             { pubkey: recipientAssociatedTokenAddress, isSigner: false, isWritable: true },
             { pubkey: txEscrowAssociatedTokenAddress, isSigner: false, isWritable: true },
-            { pubkey: A_TOKEN_Address, isSigner: false, isWritable: false },
+            { pubkey: A_TOKEN_ADDRESS, isSigner: false, isWritable: false },
             { pubkey: web3_js_1.SystemProgram.programId, isSigner: false, isWritable: false },
             { pubkey: FEE_ACCOUNT_ADDRESS, isSigner: false, isWritable: true },
             { pubkey: feeAssociatedTokenAddress, isSigner: false, isWritable: true },
@@ -208,6 +208,57 @@ var createWithdrawMultiTokenStreamInstruction = function (senderAddress, recipie
     });
 }); };
 exports.createWithdrawMultiTokenStreamInstruction = createWithdrawMultiTokenStreamInstruction;
+var createDepositMultiTokenInstruction = function (senderAddress, zebecWalletAddress, tokenProgramAddress, tokenMintAddress, systemRentAddress, senderAssociatedTokenAddress, zebecWalletAssociatedTokenAddress, aTokenAddress, programId, amount) { return __awaiter(void 0, void 0, void 0, function () {
+    var keys, ixData;
+    return __generator(this, function (_a) {
+        keys = [
+            { pubkey: senderAddress, isSigner: true, isWritable: true },
+            { pubkey: zebecWalletAddress, isSigner: false, isWritable: false },
+            { pubkey: tokenProgramAddress, isSigner: false, isWritable: false },
+            { pubkey: tokenMintAddress, isSigner: false, isWritable: true },
+            { pubkey: systemRentAddress, isSigner: false, isWritable: false },
+            { pubkey: senderAssociatedTokenAddress, isSigner: false, isWritable: true },
+            { pubkey: zebecWalletAssociatedTokenAddress, isSigner: false, isWritable: true },
+            { pubkey: web3_js_1.SystemProgram.programId, isSigner: false, isWritable: false },
+            { pubkey: aTokenAddress, isSigner: false, isWritable: false }
+        ];
+        ixData = {
+            instruction: constants_1.INSTRUCTION.DEPOSIT_TOKEN,
+            amount: (amount * web3_js_1.LAMPORTS_PER_SOL).toString()
+        };
+        return [2 /*return*/, new web3_js_1.TransactionInstruction({
+                keys: keys,
+                programId: programId,
+                data: buffer_1.Buffer.from((0, borsh_1.serialize)(SCHEMA.DepositTokenSchema, new SCHEMA.DepositToken(__assign({}, ixData))))
+            })];
+    });
+}); };
+exports.createDepositMultiTokenInstruction = createDepositMultiTokenInstruction;
+var createWithdrawDepositedTokenInstruction = function (senderAddress, tokenProgramAddress, tokenMintAddress, senderAssociatedTokenAddress, zebecWalletAddress, withdrawEscrowAddress, zebecWalletAssociatedTokenAddress, programId, amount) { return __awaiter(void 0, void 0, void 0, function () {
+    var keys, ixData;
+    return __generator(this, function (_a) {
+        keys = [
+            { pubkey: senderAddress, isSigner: true, isWritable: true },
+            { pubkey: tokenProgramAddress, isSigner: false, isWritable: false },
+            { pubkey: tokenMintAddress, isSigner: false, isWritable: true },
+            { pubkey: senderAssociatedTokenAddress, isSigner: false, isWritable: true },
+            { pubkey: zebecWalletAddress, isSigner: false, isWritable: false },
+            { pubkey: withdrawEscrowAddress, isSigner: false, isWritable: true },
+            { pubkey: zebecWalletAssociatedTokenAddress, isSigner: false, isWritable: true },
+            { pubkey: web3_js_1.SystemProgram.programId, isSigner: false, isWritable: false }
+        ];
+        ixData = {
+            instruction: constants_1.INSTRUCTION.WITHDRAW_TOKEN_STREAM,
+            amount: (amount * web3_js_1.LAMPORTS_PER_SOL).toString()
+        };
+        return [2 /*return*/, new web3_js_1.TransactionInstruction({
+                keys: keys,
+                programId: programId,
+                data: buffer_1.Buffer.from((0, borsh_1.serialize)(SCHEMA.WithdrawDepositedTokenSchema, new SCHEMA.WithdrawDepositedToken(__assign({}, ixData))))
+            })];
+    });
+}); };
+exports.createWithdrawDepositedTokenInstruction = createWithdrawDepositedTokenInstruction;
 var createInitSolStreamInstruction = function (sender, receipient, tx_escrow, withdraw_escrow, programId, start_time, end_time, amount) { return __awaiter(void 0, void 0, void 0, function () {
     var keys, ixData;
     return __generator(this, function (_a) {

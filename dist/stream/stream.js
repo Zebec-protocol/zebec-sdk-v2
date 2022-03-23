@@ -471,7 +471,7 @@ var NativeStream = /** @class */ (function (_super) {
                         console.log("response from sign and confirm: ", res);
                         return [2 /*return*/, {
                                 status: "success",
-                                message: "stream canceled",
+                                message: "withdraw successful",
                                 data: __assign({}, res)
                             }];
                     case 7:
@@ -553,7 +553,7 @@ var TokenStream = /** @class */ (function (_super) {
                         return [2 /*return*/, {
                                 status: "success",
                                 message: "initiated token stream",
-                                data: __assign({}, res)
+                                data: __assign({ pda: escrowAddress.publicKey.toBase58() }, res)
                             }];
                     case 6:
                         e_8 = _b.sent();
@@ -775,6 +775,117 @@ var TokenStream = /** @class */ (function (_super) {
                                 data: null
                             }];
                     case 11: return [2 /*return*/];
+                }
+            });
+        });
+    };
+    TokenStream.prototype.deposit = function (data) {
+        return __awaiter(this, void 0, void 0, function () {
+            var sender, token, amount, senderAddress, tokenMintAddress, senderAssociatedTokenAddress, _a, zebecWalletAddress, _, zebecWalletAssociatedTokenAddress, _TOKEN_PROGRAM_ID_, _SYSTEM_RENT, _A_TOKEN, ix, tx, recentHash, res, e_13;
+            return __generator(this, function (_b) {
+                switch (_b.label) {
+                    case 0:
+                        sender = data.sender, token = data.token, amount = data.amount;
+                        senderAddress = new web3_js_1.PublicKey(sender);
+                        tokenMintAddress = new web3_js_1.PublicKey(token);
+                        return [4 /*yield*/, this._findAssociatedTokenAddress(senderAddress, tokenMintAddress)];
+                    case 1:
+                        senderAssociatedTokenAddress = _b.sent();
+                        return [4 /*yield*/, this._findZebecWalletAccount(senderAddress)];
+                    case 2:
+                        _a = _b.sent(), zebecWalletAddress = _a[0], _ = _a[1];
+                        return [4 /*yield*/, this._findAssociatedTokenAddress(zebecWalletAddress, tokenMintAddress)];
+                    case 3:
+                        zebecWalletAssociatedTokenAddress = _b.sent();
+                        _TOKEN_PROGRAM_ID_ = new web3_js_1.PublicKey(constants_1._TOKEN_PROGRAM_ID);
+                        _SYSTEM_RENT = new web3_js_1.PublicKey(constants_1.SYSTEM_RENT);
+                        _A_TOKEN = new web3_js_1.PublicKey(constants_1.A_TOKEN);
+                        return [4 /*yield*/, INSTRUCTIONS.createDepositMultiTokenInstruction(senderAddress, zebecWalletAddress, _TOKEN_PROGRAM_ID_, tokenMintAddress, _SYSTEM_RENT, senderAssociatedTokenAddress, zebecWalletAssociatedTokenAddress, _A_TOKEN, this._programId, amount)];
+                    case 4:
+                        ix = _b.sent();
+                        tx = new web3_js_1.Transaction().add(__assign({}, ix));
+                        return [4 /*yield*/, this._connection.getRecentBlockhash()];
+                    case 5:
+                        recentHash = _b.sent();
+                        _b.label = 6;
+                    case 6:
+                        _b.trys.push([6, 8, , 9]);
+                        tx.recentBlockhash = recentHash.blockhash;
+                        tx.feePayer = this.walletProvider.publicKey;
+                        console.log("transaction ix after adding properties: ", tx);
+                        return [4 /*yield*/, this._signAndConfirm(tx)];
+                    case 7:
+                        res = _b.sent();
+                        console.log("response from sign and confirm: ", res);
+                        return [2 /*return*/, {
+                                status: "success",
+                                message: "deposited token to zebec wallet.",
+                                data: __assign({}, res)
+                            }];
+                    case 8:
+                        e_13 = _b.sent();
+                        return [2 /*return*/, {
+                                status: "error",
+                                message: e_13,
+                                data: null
+                            }];
+                    case 9: return [2 /*return*/];
+                }
+            });
+        });
+    };
+    TokenStream.prototype.withdrawDepositedToken = function (data) {
+        return __awaiter(this, void 0, void 0, function () {
+            var sender, token, amount, senderAddress, tokenMintAddress, _a, zebecWalletAddress, _, _b, withdrawEscrowAddress, __, senderAssociatedTokenAddress, zebecWalletAssociatedTokenAddress, _TOKEN_PROGRAM_ID_, ix, tx, recentHash, res, e_14;
+            return __generator(this, function (_c) {
+                switch (_c.label) {
+                    case 0:
+                        sender = data.sender, token = data.token, amount = data.amount;
+                        senderAddress = new web3_js_1.PublicKey(sender);
+                        tokenMintAddress = new web3_js_1.PublicKey(token);
+                        return [4 /*yield*/, this._findZebecWalletAccount(senderAddress)];
+                    case 1:
+                        _a = _c.sent(), zebecWalletAddress = _a[0], _ = _a[1];
+                        return [4 /*yield*/, this._findWithDrawEscrowAccount(senderAddress, tokenMintAddress)];
+                    case 2:
+                        _b = _c.sent(), withdrawEscrowAddress = _b[0], __ = _b[1];
+                        return [4 /*yield*/, this._findAssociatedTokenAddress(senderAddress, tokenMintAddress)];
+                    case 3:
+                        senderAssociatedTokenAddress = _c.sent();
+                        return [4 /*yield*/, this._findAssociatedTokenAddress(zebecWalletAddress, tokenMintAddress)];
+                    case 4:
+                        zebecWalletAssociatedTokenAddress = _c.sent();
+                        _TOKEN_PROGRAM_ID_ = new web3_js_1.PublicKey(constants_1._TOKEN_PROGRAM_ID);
+                        return [4 /*yield*/, INSTRUCTIONS.createWithdrawDepositedTokenInstruction(senderAddress, _TOKEN_PROGRAM_ID_, tokenMintAddress, senderAssociatedTokenAddress, zebecWalletAddress, withdrawEscrowAddress, zebecWalletAssociatedTokenAddress, this._programId, amount)];
+                    case 5:
+                        ix = _c.sent();
+                        tx = new web3_js_1.Transaction().add(__assign({}, ix));
+                        return [4 /*yield*/, this._connection.getRecentBlockhash()];
+                    case 6:
+                        recentHash = _c.sent();
+                        _c.label = 7;
+                    case 7:
+                        _c.trys.push([7, 9, , 10]);
+                        tx.recentBlockhash = recentHash.blockhash;
+                        tx.feePayer = this.walletProvider.publicKey;
+                        console.log("transaction ix after adding properties: ", tx);
+                        return [4 /*yield*/, this._signAndConfirm(tx)];
+                    case 8:
+                        res = _c.sent();
+                        console.log("response from sign and confirm: ", res);
+                        return [2 /*return*/, {
+                                status: "success",
+                                message: "withdrawn token from zebec wallet.",
+                                data: __assign({}, res)
+                            }];
+                    case 9:
+                        e_14 = _c.sent();
+                        return [2 /*return*/, {
+                                status: "error",
+                                message: e_14,
+                                data: null
+                            }];
+                    case 10: return [2 /*return*/];
                 }
             });
         });
