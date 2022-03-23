@@ -1,6 +1,6 @@
 import { Buffer } from 'buffer'
 import { serialize } from "borsh";
-import { Keypair, PublicKey, SystemProgram, Transaction, TransactionInstruction } from "@solana/web3.js";
+import { Keypair, LAMPORTS_PER_SOL, PublicKey, SystemProgram, Transaction, TransactionInstruction } from "@solana/web3.js";
 import * as SCHEMA from "./schema";
 import { A_TOKEN, FEE_ADDRESS, INSTRUCTION, SYSTEM_RENT, _TOKEN_PROGRAM_ID } from "../constants";
 
@@ -213,7 +213,7 @@ export const createInitSolStreamInstruction = async (
         instruction: INSTRUCTION.INIIT_SOL_STREAM,
         start_time: start_time,
         end_time: end_time,
-        amount: amount
+        amount: (amount * LAMPORTS_PER_SOL).toString()
     }
     return new TransactionInstruction({
         keys,
@@ -337,7 +337,7 @@ export const  createDepositSolInstruction = async (
 
     const ixData = {
         instruction: INSTRUCTION.DEPOSIT_SOL,
-        amount: amount
+        amount: (amount * LAMPORTS_PER_SOL).toString()
     }
 
     return new TransactionInstruction({
@@ -369,7 +369,7 @@ export const createWithdrawDepositedSolInstruction = async (
 
     const ixData = {
         instruction: INSTRUCTION.WITHDRAW_SOL,
-        amount: amount
+        amount: (amount * LAMPORTS_PER_SOL).toString()
     }
 
     return new TransactionInstruction({
@@ -408,7 +408,7 @@ export const createWithdrawSolStreamInstruction = async (
 
     const ixData = {
         instruction: INSTRUCTION.WITHDRAW_SOL_STREAM,
-        amount: amount
+        amount: (amount * LAMPORTS_PER_SOL).toString()
     }
 
 

@@ -687,6 +687,4 @@ export class TokenStream extends ZebecStream {
         }
 
     }
-
-
 }
