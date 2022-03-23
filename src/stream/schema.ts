@@ -16,13 +16,13 @@ export class PauseSolStream extends Base {}
 export class ResumeSolStream extends Base {}
 export class CancelSolStream extends Base {}
 
-
+export class DepositToken extends Base{}
 export class InitMultiTokenStream extends Base {}
 export class PauseMultiTokenStream extends Base {}
 export class ResumeMultiTokenStream extends Base {}
 export class CancelMultiTokenStream extends Base {}
 export class WithdrawMultiTokenStream extends Base {}
-
+export class WithdrawDepositedToken extends Base{}
 
 export const CancelMultiTokenStreamSchema = new Map([
     [
@@ -81,6 +81,32 @@ export const InitMultiTokenStreamSchema = new Map([
 export const WithdrawMultiTokenStreamSchema = new Map([
     [
         WithdrawMultiTokenStream,
+        {
+            kind: "struct",
+            fields: [
+                ["instruction", "u8"],
+                ["amount", "u64"]
+            ]
+        }
+    ]
+])
+
+export const DepositTokenSchema = new Map([
+    [
+        DepositToken,
+       {
+           kind: "struct",
+            fields: [
+                ["instruction", "u8"],
+                ["amount", "u64"]
+            ] 
+        }
+    ]
+])
+
+export const WithdrawDepositedTokenSchema = new Map([
+    [
+        WithdrawDepositedToken,
         {
             kind: "struct",
             fields: [

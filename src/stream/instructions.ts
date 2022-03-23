@@ -102,7 +102,7 @@ export const createCancelMultiTokenStreamInstruction = async (
     feeAssociatedTokenAddress: PublicKey
 ): Promise<TransactionInstruction> => {
     const FEE_ACCOUNT_ADDRESS = new PublicKey(FEE_ADDRESS)
-    const A_TOKEN_Address = new PublicKey(A_TOKEN)
+    const A_TOKEN_ADDRESS = new PublicKey(A_TOKEN)
     const SYSTEM_RENT_ADDRESS = new PublicKey(SYSTEM_RENT)
     const TOKEN_PROGRAM_ID_ADDRESS = new PublicKey(_TOKEN_PROGRAM_ID)
 
@@ -117,7 +117,7 @@ export const createCancelMultiTokenStreamInstruction = async (
         { pubkey: SYSTEM_RENT_ADDRESS, isSigner: false, isWritable: false },
         { pubkey: recipientAssociatedTokenAddress, isSigner: false, isWritable: true },
         { pubkey: txEscrowAssociatedTokenAddress, isSigner: false, isWritable: true },
-        { pubkey: A_TOKEN_Address, isSigner: false, isWritable: false },
+        { pubkey: A_TOKEN_ADDRESS, isSigner: false, isWritable: false },
         { pubkey: SystemProgram.programId, isSigner: false, isWritable: false },
         { pubkey: FEE_ACCOUNT_ADDRESS, isSigner: false, isWritable: true },
         { pubkey: feeAssociatedTokenAddress, isSigner:false, isWritable: true},
@@ -184,6 +184,80 @@ export const createWithdrawMultiTokenStreamInstruction = async(
         programId,
         data: Buffer.from(
             serialize(SCHEMA.WithdrawMultiTokenStreamSchema, new SCHEMA.WithdrawMultiTokenStream({...ixData}))
+        )
+    })
+}
+
+export const createDepositMultiTokenInstruction = async(
+    senderAddress: PublicKey,
+    zebecWalletAddress: PublicKey,
+    tokenProgramAddress: PublicKey,
+    tokenMintAddress: PublicKey,
+    systemRentAddress: PublicKey,
+    senderAssociatedTokenAddress: PublicKey,
+    zebecWalletAssociatedTokenAddress: PublicKey,
+    aTokenAddress: PublicKey,
+    programId: PublicKey,
+    amount: number
+): Promise<TransactionInstruction> => {
+
+    const keys = [
+        { pubkey: senderAddress, isSigner: true, isWritable: true },
+        { pubkey: zebecWalletAddress, isSigner: false, isWritable: false },
+        { pubkey: tokenProgramAddress, isSigner: false, isWritable: false },
+        { pubkey: tokenMintAddress, isSigner: false, isWritable: true },
+        { pubkey: systemRentAddress, isSigner: false, isWritable: false },
+        { pubkey: senderAssociatedTokenAddress, isSigner: false, isWritable: true },
+        { pubkey: zebecWalletAssociatedTokenAddress, isSigner: false, isWritable: true },
+        { pubkey: SystemProgram.programId, isSigner: false, isWritable: false },
+        { pubkey: aTokenAddress, isSigner: false, isWritable: false }
+    ]
+    const ixData = {
+        instruction: INSTRUCTION.DEPOSIT_TOKEN,
+        amount: (amount * LAMPORTS_PER_SOL).toString()
+    }
+
+    return new TransactionInstruction({
+        keys,
+        programId,
+        data: Buffer.from(
+            serialize(SCHEMA.DepositTokenSchema, new SCHEMA.DepositToken({...ixData}))
+        )
+    })
+}
+
+export const createWithdrawDepositedTokenInstruction = async(
+    senderAddress: PublicKey,
+    tokenProgramAddress: PublicKey,
+    tokenMintAddress: PublicKey,
+    senderAssociatedTokenAddress: PublicKey,
+    zebecWalletAddress: PublicKey,
+    withdrawEscrowAddress: PublicKey,
+    zebecWalletAssociatedTokenAddress: PublicKey,
+    programId: PublicKey,
+    amount: number
+): Promise<TransactionInstruction> => {
+    const keys = [
+        { pubkey: senderAddress, isSigner: true, isWritable: true },
+        { pubkey: tokenProgramAddress, isSigner: false, isWritable: false },
+        { pubkey: tokenMintAddress, isSigner: false, isWritable: true },
+        { pubkey: senderAssociatedTokenAddress, isSigner: false, isWritable: true },
+        { pubkey: zebecWalletAddress, isSigner: false, isWritable: false },
+        { pubkey: withdrawEscrowAddress, isSigner: false, isWritable: true },
+        { pubkey: zebecWalletAssociatedTokenAddress, isSigner: false, isWritable: true },
+        { pubkey: SystemProgram.programId, isSigner: false, isWritable: false }
+    ]
+
+    const ixData = {
+        instruction: INSTRUCTION.WITHDRAW_TOKEN_STREAM,
+        amount: (amount * LAMPORTS_PER_SOL).toString()
+    }
+
+    return new TransactionInstruction({
+        keys,
+        programId,
+        data: Buffer.from(
+            serialize(SCHEMA.WithdrawDepositedTokenSchema, new SCHEMA.WithdrawDepositedToken({...ixData}))
         )
     })
 }

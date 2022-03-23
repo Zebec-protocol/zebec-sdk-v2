@@ -378,7 +378,7 @@ export class NativeStream extends ZebecStream {
     
             return {
                 status: "success",
-                message: "stream canceled",
+                message: "withdraw successful",
                 data: { 
                     ...res
                 }
@@ -463,6 +463,7 @@ export class TokenStream extends ZebecStream {
                 status: "success",
                 message: "initiated token stream",
                 data: {
+                    pda: escrowAddress.publicKey.toBase58(),
                     ...res
                 }
             }
@@ -674,6 +675,114 @@ export class TokenStream extends ZebecStream {
             return {
                 status: "success",
                 message: "withdraw token stream.",
+                data: {
+                    ...res
+                }
+            }
+        } catch(e) {
+            return {
+                status: "error",
+                message: e,
+                data: null
+            }
+        }
+
+    }
+
+    async deposit(data: any): Promise<any> {
+        const { sender, token, amount } = data;
+
+        const senderAddress = new PublicKey(sender);
+        const tokenMintAddress = new PublicKey(token);
+
+        const senderAssociatedTokenAddress = await this._findAssociatedTokenAddress(senderAddress, tokenMintAddress);
+        const [zebecWalletAddress, _] = await this._findZebecWalletAccount(senderAddress);
+        const zebecWalletAssociatedTokenAddress = await this._findAssociatedTokenAddress(zebecWalletAddress, tokenMintAddress);
+        const _TOKEN_PROGRAM_ID_ = new PublicKey(_TOKEN_PROGRAM_ID);
+        const _SYSTEM_RENT = new PublicKey(SYSTEM_RENT);
+        const _A_TOKEN = new PublicKey(A_TOKEN);
+
+        const ix = await INSTRUCTIONS.createDepositMultiTokenInstruction(
+            senderAddress,
+            zebecWalletAddress,
+            _TOKEN_PROGRAM_ID_,
+            tokenMintAddress,
+            _SYSTEM_RENT,
+            senderAssociatedTokenAddress,
+            zebecWalletAssociatedTokenAddress,
+            _A_TOKEN,
+            this._programId,
+            amount
+        )
+
+        let tx = new Transaction().add({...ix});
+        const recentHash = await this._connection.getRecentBlockhash();
+
+        try {
+            tx.recentBlockhash = recentHash.blockhash;
+            tx.feePayer = this.walletProvider.publicKey;
+            
+            console.log("transaction ix after adding properties: ", tx);
+    
+            const res = await this._signAndConfirm(tx);
+
+            console.log("response from sign and confirm: ", res);
+    
+            return {
+                status: "success",
+                message: "deposited token to zebec wallet.",
+                data: {
+                    ...res
+                }
+            }
+        } catch(e) {
+            return {
+                status: "error",
+                message: e,
+                data: null
+            }
+        }
+    }
+
+    async withdrawDepositedToken(data: any): Promise<any> {
+        const { sender, token, amount } = data;
+
+        const senderAddress = new PublicKey(sender);
+        const tokenMintAddress = new PublicKey(token);
+        const [zebecWalletAddress, _] = await this._findZebecWalletAccount(senderAddress);
+        const [withdrawEscrowAddress, __] = await this._findWithDrawEscrowAccount(senderAddress, tokenMintAddress);
+        const senderAssociatedTokenAddress = await this._findAssociatedTokenAddress(senderAddress, tokenMintAddress);
+        const zebecWalletAssociatedTokenAddress = await this._findAssociatedTokenAddress(zebecWalletAddress, tokenMintAddress);
+        const _TOKEN_PROGRAM_ID_ = new PublicKey(_TOKEN_PROGRAM_ID);
+
+        const ix = await INSTRUCTIONS.createWithdrawDepositedTokenInstruction(
+            senderAddress,
+            _TOKEN_PROGRAM_ID_,
+            tokenMintAddress,
+            senderAssociatedTokenAddress,
+            zebecWalletAddress,
+            withdrawEscrowAddress,
+            zebecWalletAssociatedTokenAddress,
+            this._programId,
+            amount
+        )
+
+        let tx = new Transaction().add({...ix});
+        const recentHash = await this._connection.getRecentBlockhash();
+
+        try {
+            tx.recentBlockhash = recentHash.blockhash;
+            tx.feePayer = this.walletProvider.publicKey;
+            
+            console.log("transaction ix after adding properties: ", tx);
+    
+            const res = await this._signAndConfirm(tx);
+
+            console.log("response from sign and confirm: ", res);
+    
+            return {
+                status: "success",
+                message: "withdrawn token from zebec wallet.",
                 data: {
                     ...res
                 }
