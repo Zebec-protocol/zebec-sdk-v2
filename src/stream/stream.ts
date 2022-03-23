@@ -418,7 +418,7 @@ export class TokenStream extends ZebecStream {
                 [walletAddress.toBuffer(), TOKEN_PROGRAM_ID.toBuffer(), tokenMintAddress.toBuffer()],
                 new PublicKey(SPL_ASSOCIATED_TOKEN_ACCOUNT_PROGRAM_ID)
             )[0]
-        console.log(`Associated token address of ${walletAddress.toBase58()} is: `, associatedTokenAddress, associatedTokenAddress.toBase58());
+        console.log(`Associated token address of ${walletAddress.toBase58()} is: `, associatedTokenAddress);
         return associatedTokenAddress
         
     }
