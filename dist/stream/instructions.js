@@ -222,7 +222,7 @@ var createInitSolStreamInstruction = function (sender, receipient, tx_escrow, wi
             instruction: constants_1.INSTRUCTION.INIIT_SOL_STREAM,
             start_time: start_time,
             end_time: end_time,
-            amount: amount
+            amount: (amount * web3_js_1.LAMPORTS_PER_SOL).toString()
         };
         return [2 /*return*/, new web3_js_1.TransactionInstruction({
                 keys: keys,
@@ -306,7 +306,7 @@ var createDepositSolInstruction = function (sender, zebecWalletAddress, amount, 
         ];
         ixData = {
             instruction: constants_1.INSTRUCTION.DEPOSIT_SOL,
-            amount: amount
+            amount: (amount * web3_js_1.LAMPORTS_PER_SOL).toString()
         };
         return [2 /*return*/, new web3_js_1.TransactionInstruction({
                 keys: keys,
@@ -327,7 +327,7 @@ var createWithdrawDepositedSolInstruction = function (senderAddress, zebecWallet
         ];
         ixData = {
             instruction: constants_1.INSTRUCTION.WITHDRAW_SOL,
-            amount: amount
+            amount: (amount * web3_js_1.LAMPORTS_PER_SOL).toString()
         };
         return [2 /*return*/, new web3_js_1.TransactionInstruction({
                 keys: keys,
@@ -352,7 +352,7 @@ var createWithdrawSolStreamInstruction = function (senderAddress, receipientAddr
         ];
         ixData = {
             instruction: constants_1.INSTRUCTION.WITHDRAW_SOL_STREAM,
-            amount: amount
+            amount: (amount * web3_js_1.LAMPORTS_PER_SOL).toString()
         };
         return [2 /*return*/, new web3_js_1.TransactionInstruction({
                 keys: keys,
