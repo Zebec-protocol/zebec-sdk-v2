@@ -712,6 +712,9 @@ export class TokenStream extends ZebecStream {
         const _SYSTEM_RENT = new PublicKey(SYSTEM_RENT);
         const _A_TOKEN = new PublicKey(A_TOKEN);
 
+        console.log("Sender Associated Token Address", senderAssociatedTokenAddress);
+        console.log("Zebec Wallet Associated Token Address", zebecWalletAssociatedTokenAddress);
+
         const ix = await INSTRUCTIONS.createDepositMultiTokenInstruction(
             senderAddress,
             zebecWalletAddress,
