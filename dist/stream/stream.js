@@ -806,6 +806,8 @@ var TokenStream = /** @class */ (function (_super) {
                         _TOKEN_PROGRAM_ID_ = new web3_js_1.PublicKey(constants_1._TOKEN_PROGRAM_ID);
                         _SYSTEM_RENT = new web3_js_1.PublicKey(constants_1.SYSTEM_RENT);
                         _A_TOKEN = new web3_js_1.PublicKey(constants_1.A_TOKEN);
+                        console.log("Sender Associated Token Address", senderAssociatedTokenAddress);
+                        console.log("Zebec Wallet Associated Token Address", zebecWalletAssociatedTokenAddress);
                         return [4 /*yield*/, INSTRUCTIONS.createDepositMultiTokenInstruction(senderAddress, zebecWalletAddress, _TOKEN_PROGRAM_ID_, tokenMintAddress, _SYSTEM_RENT, senderAssociatedTokenAddress, zebecWalletAssociatedTokenAddress, _A_TOKEN, this._programId, amount)];
                     case 4:
                         ix = _b.sent();
