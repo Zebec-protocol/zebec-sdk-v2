@@ -525,6 +525,7 @@ var TokenStream = /** @class */ (function (_super) {
                 switch (_b.label) {
                     case 0:
                         sender = data.sender, receiver = data.receiver, token = data.token, start_time = data.start_time, end_time = data.end_time, amount = data.amount;
+                        console.log("sender token stream data: ", data);
                         senderAddress = new web3_js_1.PublicKey(sender);
                         recipientAddress = new web3_js_1.PublicKey(receiver);
                         tokenMintAddress = new web3_js_1.PublicKey(token);
@@ -574,6 +575,7 @@ var TokenStream = /** @class */ (function (_super) {
                 switch (_a.label) {
                     case 0:
                         sender = data.sender, receiver = data.receiver, pda = data.pda;
+                        console.log("pause token stream data: ", data);
                         senderAddress = new web3_js_1.PublicKey(sender);
                         recipientAddress = new web3_js_1.PublicKey(receiver);
                         escrowAddress = new web3_js_1.PublicKey(pda);
@@ -618,6 +620,7 @@ var TokenStream = /** @class */ (function (_super) {
                 switch (_a.label) {
                     case 0:
                         sender = data.sender, receiver = data.receiver, pda = data.pda;
+                        console.log("resume token stream data: ", data);
                         senderAddress = new web3_js_1.PublicKey(sender);
                         recipientAddress = new web3_js_1.PublicKey(receiver);
                         escrowAddress = new web3_js_1.PublicKey(pda);
@@ -662,6 +665,7 @@ var TokenStream = /** @class */ (function (_super) {
                 switch (_c.label) {
                     case 0:
                         sender = data.sender, receiver = data.receiver, token = data.token, pda = data.pda;
+                        console.log("cancel token stream data: ", data);
                         senderAddress = new web3_js_1.PublicKey(sender);
                         recipientAddress = new web3_js_1.PublicKey(receiver);
                         tokenMintAddress = new web3_js_1.PublicKey(token);
@@ -722,6 +726,7 @@ var TokenStream = /** @class */ (function (_super) {
                 switch (_c.label) {
                     case 0:
                         sender = data.sender, receiver = data.receiver, token = data.token, pda = data.pda, amount = data.amount;
+                        console.log("withdraw token stream data: ", data);
                         senderAddress = new web3_js_1.PublicKey(sender);
                         recipientAddress = new web3_js_1.PublicKey(receiver);
                         tokenMintAddress = new web3_js_1.PublicKey(token);
@@ -786,6 +791,7 @@ var TokenStream = /** @class */ (function (_super) {
                 switch (_b.label) {
                     case 0:
                         sender = data.sender, token = data.token, amount = data.amount;
+                        console.log("deposit token stream data: ", data);
                         senderAddress = new web3_js_1.PublicKey(sender);
                         tokenMintAddress = new web3_js_1.PublicKey(token);
                         return [4 /*yield*/, this._findAssociatedTokenAddress(senderAddress, tokenMintAddress)];
@@ -841,6 +847,7 @@ var TokenStream = /** @class */ (function (_super) {
                 switch (_c.label) {
                     case 0:
                         sender = data.sender, token = data.token, amount = data.amount;
+                        console.log("withdraw deposited token data: ", data);
                         senderAddress = new web3_js_1.PublicKey(sender);
                         tokenMintAddress = new web3_js_1.PublicKey(token);
                         return [4 /*yield*/, this._findZebecWalletAccount(senderAddress)];
