@@ -136,9 +136,8 @@ var NativeStream = /** @class */ (function (_super) {
     function NativeStream(walletProvider, rpcUrl, commitment) {
         if (rpcUrl === void 0) { rpcUrl = constants_1.RPC_ENDPOINTS.DEFAULT; }
         if (commitment === void 0) { commitment = "confirmed"; }
-        var _this = _super.call(this, walletProvider, rpcUrl, commitment) || this;
-        console.log("Native Stream Initialized!", walletProvider, rpcUrl);
-        return _this;
+        return _super.call(this, walletProvider, rpcUrl, commitment) || this;
+        // console.log("Native Stream Initialized!", walletProvider, rpcUrl);
     }
     NativeStream.prototype._findWithDrawEscrowAccount = function (walletAddress) {
         return __awaiter(this, void 0, void 0, function () {
@@ -157,7 +156,6 @@ var NativeStream = /** @class */ (function (_super) {
                 switch (_b.label) {
                     case 0:
                         sender = data.sender, amount = data.amount;
-                        console.log("deposit solana to Zebec Wallet started with: ", data);
                         senderAddress = new web3_js_1.PublicKey(sender);
                         return [4 /*yield*/, this._findZebecWalletAccount(senderAddress)];
                     case 1:
@@ -174,11 +172,10 @@ var NativeStream = /** @class */ (function (_super) {
                         _b.trys.push([4, 6, , 7]);
                         tx.recentBlockhash = recentHash.blockhash;
                         tx.feePayer = this.walletProvider.publicKey;
-                        console.log("transaction ix after adding properties: ", tx);
                         return [4 /*yield*/, this._signAndConfirm(tx)];
                     case 5:
                         res = _b.sent();
-                        console.log("response from sign and confirm: ", res);
+                        // console.log("response from sign and confirm: ", res);
                         return [2 /*return*/, {
                                 status: "success",
                                 message: "deposit successful",
@@ -203,7 +200,6 @@ var NativeStream = /** @class */ (function (_super) {
                 switch (_c.label) {
                     case 0:
                         sender = data.sender, amount = data.amount;
-                        console.log("withdraw solana from Zebec Wallet started with: ", data);
                         senderAddress = new web3_js_1.PublicKey(sender);
                         return [4 /*yield*/, this._findZebecWalletAccount(senderAddress)];
                     case 1:
@@ -223,11 +219,10 @@ var NativeStream = /** @class */ (function (_super) {
                         _c.trys.push([5, 7, , 8]);
                         tx.recentBlockhash = recentHash.blockhash;
                         tx.feePayer = this.walletProvider.publicKey;
-                        console.log("transaction ix after adding properties: ", tx);
                         return [4 /*yield*/, this._signAndConfirm(tx)];
                     case 6:
                         res = _c.sent();
-                        console.log("response from sign and confirm: ", res);
+                        // console.log("response from sign and confirm: ", res);
                         return [2 /*return*/, {
                                 status: "success",
                                 message: "withdraw successful",
@@ -252,7 +247,6 @@ var NativeStream = /** @class */ (function (_super) {
                 switch (_b.label) {
                     case 0:
                         sender = data.sender, receiver = data.receiver, start_time = data.start_time, end_time = data.end_time, amount = data.amount;
-                        console.log("init solana stream data: ", data);
                         senderAddress = new web3_js_1.PublicKey(sender);
                         recipientAddress = new web3_js_1.PublicKey(receiver);
                         return [4 /*yield*/, this._findWithDrawEscrowAccount(senderAddress)];
@@ -272,11 +266,10 @@ var NativeStream = /** @class */ (function (_super) {
                         tx.recentBlockhash = recentHash.blockhash;
                         tx.feePayer = this.walletProvider.publicKey;
                         tx.partialSign(tx_escrow);
-                        console.log("transaction ix after adding properties: ", tx);
                         return [4 /*yield*/, this._signAndConfirm(tx)];
                     case 5:
                         res = _b.sent();
-                        console.log("response from sign and confirm: ", res);
+                        // console.log("response from sign and confirm: ", res);
                         return [2 /*return*/, {
                                 status: "success",
                                 message: "stream started successfully",
@@ -301,7 +294,6 @@ var NativeStream = /** @class */ (function (_super) {
                 switch (_a.label) {
                     case 0:
                         sender = data.sender, receiver = data.receiver, pda = data.pda;
-                        console.log("pause solana stream data: ", data);
                         senderAddress = new web3_js_1.PublicKey(sender);
                         recipientAddress = new web3_js_1.PublicKey(receiver);
                         escrowAddress = new web3_js_1.PublicKey(pda);
@@ -317,11 +309,10 @@ var NativeStream = /** @class */ (function (_super) {
                         _a.trys.push([3, 5, , 6]);
                         tx.recentBlockhash = recentHash.blockhash;
                         tx.feePayer = this.walletProvider.publicKey;
-                        console.log("transaction ix after adding properties: ", tx);
                         return [4 /*yield*/, this._signAndConfirm(tx)];
                     case 4:
                         res = _a.sent();
-                        console.log("response from sign and confirm: ", res);
+                        // console.log("response from sign and confirm: ", res);
                         return [2 /*return*/, {
                                 status: "success",
                                 message: "stream paused",
@@ -346,7 +337,6 @@ var NativeStream = /** @class */ (function (_super) {
                 switch (_a.label) {
                     case 0:
                         sender = data.sender, receiver = data.receiver, pda = data.pda;
-                        console.log("resume solana stream data: ", data);
                         senderAddress = new web3_js_1.PublicKey(sender);
                         recipientAddress = new web3_js_1.PublicKey(receiver);
                         escrowAddress = new web3_js_1.PublicKey(pda);
@@ -362,11 +352,10 @@ var NativeStream = /** @class */ (function (_super) {
                         _a.trys.push([3, 5, , 6]);
                         tx.recentBlockhash = recentHash.blockhash;
                         tx.feePayer = this.walletProvider.publicKey;
-                        console.log("transaction ix after adding properties: ", tx);
                         return [4 /*yield*/, this._signAndConfirm(tx)];
                     case 4:
                         res = _a.sent();
-                        console.log("response from sign and confirm: ", res);
+                        // console.log("response from sign and confirm: ", res);
                         return [2 /*return*/, {
                                 status: "success",
                                 message: "stream resumed",
@@ -391,7 +380,6 @@ var NativeStream = /** @class */ (function (_super) {
                 switch (_c.label) {
                     case 0:
                         sender = data.sender, receiver = data.receiver, pda = data.pda;
-                        console.log("cancel solana stream data: ", data);
                         senderAddress = new web3_js_1.PublicKey(sender);
                         recipientAddress = new web3_js_1.PublicKey(receiver);
                         escrowAddress = new web3_js_1.PublicKey(pda);
@@ -413,11 +401,10 @@ var NativeStream = /** @class */ (function (_super) {
                         _c.trys.push([5, 7, , 8]);
                         tx.recentBlockhash = recentHash.blockhash;
                         tx.feePayer = this.walletProvider.publicKey;
-                        console.log("transaction ix after adding properties: ", tx);
                         return [4 /*yield*/, this._signAndConfirm(tx)];
                     case 6:
                         res = _c.sent();
-                        console.log("response from sign and confirm: ", res);
+                        // console.log("response from sign and confirm: ", res);
                         return [2 /*return*/, {
                                 status: "success",
                                 message: "stream canceled",
@@ -442,7 +429,6 @@ var NativeStream = /** @class */ (function (_super) {
                 switch (_c.label) {
                     case 0:
                         sender = data.sender, amount = data.amount, receiver = data.receiver, pda = data.pda;
-                        console.log("withdraw solana stream data: ", data);
                         senderAddress = new web3_js_1.PublicKey(sender);
                         recipientAddress = new web3_js_1.PublicKey(receiver);
                         escrowAddress = new web3_js_1.PublicKey(pda);
@@ -464,11 +450,10 @@ var NativeStream = /** @class */ (function (_super) {
                         _c.trys.push([5, 7, , 8]);
                         tx.recentBlockhash = recentHash.blockhash;
                         tx.feePayer = this.walletProvider.publicKey;
-                        console.log("transaction ix after adding properties: ", tx);
                         return [4 /*yield*/, this._signAndConfirm(tx)];
                     case 6:
                         res = _c.sent();
-                        console.log("response from sign and confirm: ", res);
+                        // console.log("response from sign and confirm: ", res);
                         return [2 /*return*/, {
                                 status: "success",
                                 message: "withdraw successful",
@@ -494,9 +479,8 @@ var TokenStream = /** @class */ (function (_super) {
     function TokenStream(walletProvider, rpcUrl, commitment) {
         if (rpcUrl === void 0) { rpcUrl = constants_1.RPC_ENDPOINTS.DEFAULT; }
         if (commitment === void 0) { commitment = "confirmed"; }
-        var _this = _super.call(this, walletProvider, rpcUrl, commitment) || this;
-        console.log("Token Stream Initialized!", walletProvider, rpcUrl);
-        return _this;
+        return _super.call(this, walletProvider, rpcUrl, commitment) || this;
+        // console.log("Token Stream Initialized!", walletProvider, rpcUrl);
     }
     TokenStream.prototype._findWithDrawEscrowAccount = function (walletAddress, tokenMintAddress) {
         return __awaiter(this, void 0, void 0, function () {
@@ -525,7 +509,6 @@ var TokenStream = /** @class */ (function (_super) {
                 switch (_b.label) {
                     case 0:
                         sender = data.sender, receiver = data.receiver, token = data.token, start_time = data.start_time, end_time = data.end_time, amount = data.amount;
-                        console.log("sender token stream data: ", data);
                         senderAddress = new web3_js_1.PublicKey(sender);
                         recipientAddress = new web3_js_1.PublicKey(receiver);
                         tokenMintAddress = new web3_js_1.PublicKey(token);
@@ -546,11 +529,10 @@ var TokenStream = /** @class */ (function (_super) {
                         tx.recentBlockhash = recentHash.blockhash;
                         tx.feePayer = this.walletProvider.publicKey;
                         tx.partialSign(escrowAddress);
-                        console.log("transaction ix after adding properties: ", tx);
                         return [4 /*yield*/, this._signAndConfirm(tx)];
                     case 5:
                         res = _b.sent();
-                        console.log("response from sign and confirm: ", res);
+                        // console.log("response from sign and confirm: ", res);
                         return [2 /*return*/, {
                                 status: "success",
                                 message: "initiated token stream",
@@ -575,7 +557,6 @@ var TokenStream = /** @class */ (function (_super) {
                 switch (_a.label) {
                     case 0:
                         sender = data.sender, receiver = data.receiver, pda = data.pda;
-                        console.log("pause token stream data: ", data);
                         senderAddress = new web3_js_1.PublicKey(sender);
                         recipientAddress = new web3_js_1.PublicKey(receiver);
                         escrowAddress = new web3_js_1.PublicKey(pda);
@@ -591,11 +572,10 @@ var TokenStream = /** @class */ (function (_super) {
                         _a.trys.push([3, 5, , 6]);
                         tx.recentBlockhash = recentHash.blockhash;
                         tx.feePayer = this.walletProvider.publicKey;
-                        console.log("transaction ix after adding properties: ", tx);
                         return [4 /*yield*/, this._signAndConfirm(tx)];
                     case 4:
                         res = _a.sent();
-                        console.log("response from sign and confirm: ", res);
+                        // console.log("response from sign and confirm: ", res);
                         return [2 /*return*/, {
                                 status: "success",
                                 message: "paused token stream.",
@@ -620,7 +600,6 @@ var TokenStream = /** @class */ (function (_super) {
                 switch (_a.label) {
                     case 0:
                         sender = data.sender, receiver = data.receiver, pda = data.pda;
-                        console.log("resume token stream data: ", data);
                         senderAddress = new web3_js_1.PublicKey(sender);
                         recipientAddress = new web3_js_1.PublicKey(receiver);
                         escrowAddress = new web3_js_1.PublicKey(pda);
@@ -636,11 +615,10 @@ var TokenStream = /** @class */ (function (_super) {
                         _a.trys.push([3, 5, , 6]);
                         tx.recentBlockhash = recentHash.blockhash;
                         tx.feePayer = this.walletProvider.publicKey;
-                        console.log("transaction ix after adding properties: ", tx);
                         return [4 /*yield*/, this._signAndConfirm(tx)];
                     case 4:
                         res = _a.sent();
-                        console.log("response from sign and confirm: ", res);
+                        // console.log("response from sign and confirm: ", res);
                         return [2 /*return*/, {
                                 status: "success",
                                 message: "resumed token stream.",
@@ -665,7 +643,6 @@ var TokenStream = /** @class */ (function (_super) {
                 switch (_c.label) {
                     case 0:
                         sender = data.sender, receiver = data.receiver, token = data.token, pda = data.pda;
-                        console.log("cancel token stream data: ", data);
                         senderAddress = new web3_js_1.PublicKey(sender);
                         recipientAddress = new web3_js_1.PublicKey(receiver);
                         tokenMintAddress = new web3_js_1.PublicKey(token);
@@ -697,11 +674,10 @@ var TokenStream = /** @class */ (function (_super) {
                         _c.trys.push([8, 10, , 11]);
                         tx.recentBlockhash = recentHash.blockhash;
                         tx.feePayer = this.walletProvider.publicKey;
-                        console.log("transaction ix after adding properties: ", tx);
                         return [4 /*yield*/, this._signAndConfirm(tx)];
                     case 9:
                         res = _c.sent();
-                        console.log("response from sign and confirm: ", res);
+                        // console.log("response from sign and confirm: ", res);
                         return [2 /*return*/, {
                                 status: "success",
                                 message: "canceled token stream.",
@@ -726,7 +702,6 @@ var TokenStream = /** @class */ (function (_super) {
                 switch (_c.label) {
                     case 0:
                         sender = data.sender, receiver = data.receiver, token = data.token, pda = data.pda, amount = data.amount;
-                        console.log("withdraw token stream data: ", data);
                         senderAddress = new web3_js_1.PublicKey(sender);
                         recipientAddress = new web3_js_1.PublicKey(receiver);
                         tokenMintAddress = new web3_js_1.PublicKey(token);
@@ -762,11 +737,10 @@ var TokenStream = /** @class */ (function (_super) {
                         _c.trys.push([8, 10, , 11]);
                         tx.recentBlockhash = recentHash.blockhash;
                         tx.feePayer = this.walletProvider.publicKey;
-                        console.log("transaction ix after adding properties: ", tx);
                         return [4 /*yield*/, this._signAndConfirm(tx)];
                     case 9:
                         res = _c.sent();
-                        console.log("response from sign and confirm: ", res);
+                        // console.log("response from sign and confirm: ", res);
                         return [2 /*return*/, {
                                 status: "success",
                                 message: "withdraw token stream.",
@@ -791,7 +765,6 @@ var TokenStream = /** @class */ (function (_super) {
                 switch (_b.label) {
                     case 0:
                         sender = data.sender, token = data.token, amount = data.amount;
-                        console.log("deposit token stream data: ", data);
                         senderAddress = new web3_js_1.PublicKey(sender);
                         tokenMintAddress = new web3_js_1.PublicKey(token);
                         return [4 /*yield*/, this._findAssociatedTokenAddress(senderAddress, tokenMintAddress)];
@@ -806,8 +779,6 @@ var TokenStream = /** @class */ (function (_super) {
                         _TOKEN_PROGRAM_ID_ = new web3_js_1.PublicKey(constants_1._TOKEN_PROGRAM_ID);
                         _SYSTEM_RENT = new web3_js_1.PublicKey(constants_1.SYSTEM_RENT);
                         _A_TOKEN = new web3_js_1.PublicKey(constants_1.A_TOKEN);
-                        console.log("Sender Associated Token Address", senderAssociatedTokenAddress);
-                        console.log("Zebec Wallet Associated Token Address", zebecWalletAssociatedTokenAddress);
                         return [4 /*yield*/, INSTRUCTIONS.createDepositMultiTokenInstruction(senderAddress, zebecWalletAddress, _TOKEN_PROGRAM_ID_, tokenMintAddress, _SYSTEM_RENT, senderAssociatedTokenAddress, zebecWalletAssociatedTokenAddress, _A_TOKEN, this._programId, amount)];
                     case 4:
                         ix = _b.sent();
@@ -820,11 +791,10 @@ var TokenStream = /** @class */ (function (_super) {
                         _b.trys.push([6, 8, , 9]);
                         tx.recentBlockhash = recentHash.blockhash;
                         tx.feePayer = this.walletProvider.publicKey;
-                        console.log("transaction ix after adding properties: ", tx);
                         return [4 /*yield*/, this._signAndConfirm(tx)];
                     case 7:
                         res = _b.sent();
-                        console.log("response from sign and confirm: ", res);
+                        // console.log("response from sign and confirm: ", res);
                         return [2 /*return*/, {
                                 status: "success",
                                 message: "deposited token to zebec wallet.",
@@ -849,7 +819,6 @@ var TokenStream = /** @class */ (function (_super) {
                 switch (_c.label) {
                     case 0:
                         sender = data.sender, token = data.token, amount = data.amount;
-                        console.log("withdraw deposited token data: ", data);
                         senderAddress = new web3_js_1.PublicKey(sender);
                         tokenMintAddress = new web3_js_1.PublicKey(token);
                         return [4 /*yield*/, this._findZebecWalletAccount(senderAddress)];
@@ -877,11 +846,10 @@ var TokenStream = /** @class */ (function (_super) {
                         _c.trys.push([7, 9, , 10]);
                         tx.recentBlockhash = recentHash.blockhash;
                         tx.feePayer = this.walletProvider.publicKey;
-                        console.log("transaction ix after adding properties: ", tx);
                         return [4 /*yield*/, this._signAndConfirm(tx)];
                     case 8:
                         res = _c.sent();
-                        console.log("response from sign and confirm: ", res);
+                        // console.log("response from sign and confirm: ", res);
                         return [2 /*return*/, {
                                 status: "success",
                                 message: "withdrawn token from zebec wallet.",

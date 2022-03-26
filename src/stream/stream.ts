@@ -47,7 +47,7 @@ export class NativeStream extends ZebecStream {
         commitment: Commitment |  undefined = "confirmed"
     ) {
         super(walletProvider, rpcUrl, commitment);
-        console.log("Native Stream Initialized!", walletProvider, rpcUrl);
+        // console.log("Native Stream Initialized!", walletProvider, rpcUrl);
     }
 
     protected async _findWithDrawEscrowAccount(walletAddress: PublicKey): Promise<[PublicKey, number]> {
@@ -61,7 +61,7 @@ export class NativeStream extends ZebecStream {
     async deposit(data: DepositWithdrawSol): Promise<StreamTransactionResponse> {
         const { sender, amount } = data;
 
-        console.log("deposit solana to Zebec Wallet started with: ", data);
+        // console.log("deposit solana to Zebec Wallet started with: ", data);
 
         const senderAddress = new PublicKey(sender);
         const [zebecWalletAddress, _] = await this._findZebecWalletAccount(senderAddress);
@@ -80,11 +80,11 @@ export class NativeStream extends ZebecStream {
             tx.recentBlockhash = recentHash.blockhash;
             tx.feePayer = this.walletProvider.publicKey;
             
-            console.log("transaction ix after adding properties: ", tx);
+            // console.log("transaction ix after adding properties: ", tx);
     
             const res = await this._signAndConfirm(tx);
 
-            console.log("response from sign and confirm: ", res);
+            // console.log("response from sign and confirm: ", res);
     
             return {
                 status: "success",
@@ -104,7 +104,7 @@ export class NativeStream extends ZebecStream {
 
     async withdrawDepositedSol(data: DepositWithdrawSol): Promise<StreamTransactionResponse> {
         const { sender, amount } = data;
-        console.log("withdraw solana from Zebec Wallet started with: ", data);
+        // console.log("withdraw solana from Zebec Wallet started with: ", data);
 
         const senderAddress = new PublicKey(sender);
         const [zebecWalletAddress, __] = await this._findZebecWalletAccount(senderAddress);
@@ -125,11 +125,11 @@ export class NativeStream extends ZebecStream {
             tx.recentBlockhash = recentHash.blockhash;
             tx.feePayer = this.walletProvider.publicKey;
             
-            console.log("transaction ix after adding properties: ", tx);
+            // console.log("transaction ix after adding properties: ", tx);
     
             const res = await this._signAndConfirm(tx);
 
-            console.log("response from sign and confirm: ", res);
+            // console.log("response from sign and confirm: ", res);
     
             return {
                 status: "success",
@@ -151,7 +151,7 @@ export class NativeStream extends ZebecStream {
 
     async init(data: InitNativeStream): Promise<StreamTransactionResponse> {
         const { sender, receiver, start_time, end_time, amount } = data;
-        console.log("init solana stream data: ", data);
+        // console.log("init solana stream data: ", data);
         
         const senderAddress = new PublicKey(sender);
         const recipientAddress = new PublicKey(receiver)
@@ -179,11 +179,11 @@ export class NativeStream extends ZebecStream {
             tx.feePayer = this.walletProvider.publicKey;
             tx.partialSign(tx_escrow);
             
-            console.log("transaction ix after adding properties: ", tx);
+            // console.log("transaction ix after adding properties: ", tx);
     
             const res = await this._signAndConfirm(tx);
 
-            console.log("response from sign and confirm: ", res);
+            // console.log("response from sign and confirm: ", res);
     
             return {
                 status: "success",
@@ -204,7 +204,7 @@ export class NativeStream extends ZebecStream {
 
     async pause(data: PauseResumeCancelNativeStream): Promise<StreamTransactionResponse> {
         const { sender, receiver, pda } = data;
-        console.log("pause solana stream data: ", data);
+        // console.log("pause solana stream data: ", data);
 
 
         const senderAddress = new PublicKey(sender);
@@ -225,11 +225,11 @@ export class NativeStream extends ZebecStream {
             tx.recentBlockhash = recentHash.blockhash;
             tx.feePayer = this.walletProvider.publicKey;
             
-            console.log("transaction ix after adding properties: ", tx);
+            // console.log("transaction ix after adding properties: ", tx);
     
             const res = await this._signAndConfirm(tx);
 
-            console.log("response from sign and confirm: ", res);
+            // console.log("response from sign and confirm: ", res);
     
             return {
                 status: "success",
@@ -249,7 +249,7 @@ export class NativeStream extends ZebecStream {
 
     async resume(data: PauseResumeCancelNativeStream): Promise<StreamTransactionResponse> {
         const { sender, receiver, pda } = data;
-        console.log("resume solana stream data: ", data);
+        // console.log("resume solana stream data: ", data);
         
         const senderAddress = new PublicKey(sender);
         const recipientAddress = new PublicKey(receiver);
@@ -269,11 +269,11 @@ export class NativeStream extends ZebecStream {
             tx.recentBlockhash = recentHash.blockhash;
             tx.feePayer = this.walletProvider.publicKey;
             
-            console.log("transaction ix after adding properties: ", tx);
+            // console.log("transaction ix after adding properties: ", tx);
     
             const res = await this._signAndConfirm(tx);
 
-            console.log("response from sign and confirm: ", res);
+            // console.log("response from sign and confirm: ", res);
     
             return {
                 status: "success",
@@ -293,7 +293,7 @@ export class NativeStream extends ZebecStream {
 
     async cancel(data: PauseResumeCancelNativeStream): Promise<StreamTransactionResponse> {
         const { sender, receiver, pda} = data;
-        console.log("cancel solana stream data: ", data);
+        // console.log("cancel solana stream data: ", data);
 
         const senderAddress = new PublicKey(sender);
         const recipientAddress = new PublicKey(receiver);
@@ -319,11 +319,11 @@ export class NativeStream extends ZebecStream {
             tx.recentBlockhash = recentHash.blockhash;
             tx.feePayer = this.walletProvider.publicKey;
             
-            console.log("transaction ix after adding properties: ", tx);
+            // console.log("transaction ix after adding properties: ", tx);
     
             const res = await this._signAndConfirm(tx);
 
-            console.log("response from sign and confirm: ", res);
+            // console.log("response from sign and confirm: ", res);
     
             return {
                 status: "success",
@@ -343,7 +343,7 @@ export class NativeStream extends ZebecStream {
 
     async withdraw(data: WithdrawNativeStream): Promise<StreamTransactionResponse> {
         const { sender, amount, receiver, pda } = data;
-        console.log("withdraw solana stream data: ", data);
+        // console.log("withdraw solana stream data: ", data);
 
         const senderAddress = new PublicKey(sender);
         const recipientAddress = new PublicKey(receiver);
@@ -370,11 +370,11 @@ export class NativeStream extends ZebecStream {
             tx.recentBlockhash = recentHash.blockhash;
             tx.feePayer = this.walletProvider.publicKey;
             
-            console.log("transaction ix after adding properties: ", tx);
+            // console.log("transaction ix after adding properties: ", tx);
     
             const res = await this._signAndConfirm(tx);
 
-            console.log("response from sign and confirm: ", res);
+            // console.log("response from sign and confirm: ", res);
     
             return {
                 status: "success",
@@ -402,7 +402,7 @@ export class TokenStream extends ZebecStream {
         commitment: Commitment |  undefined = "confirmed"
     ) {
         super(walletProvider, rpcUrl, commitment);
-        console.log("Token Stream Initialized!", walletProvider, rpcUrl);
+        // console.log("Token Stream Initialized!", walletProvider, rpcUrl);
     }
 
     protected async _findWithDrawEscrowAccount(walletAddress: PublicKey, tokenMintAddress: PublicKey): Promise<[PublicKey, number]> {
@@ -422,7 +422,7 @@ export class TokenStream extends ZebecStream {
 
     async init(data: any): Promise<any> {
         const { sender, receiver, token, start_time, end_time, amount } = data;
-        console.log("sender token stream data: ", data);
+        // console.log("sender token stream data: ", data);
 
         const senderAddress = new PublicKey(sender);
         const recipientAddress = new PublicKey(receiver);
@@ -452,11 +452,11 @@ export class TokenStream extends ZebecStream {
             tx.feePayer = this.walletProvider.publicKey;
             tx.partialSign(escrowAddress);
 
-            console.log("transaction ix after adding properties: ", tx);
+            // console.log("transaction ix after adding properties: ", tx);
     
             const res = await this._signAndConfirm(tx);
 
-            console.log("response from sign and confirm: ", res);
+            // console.log("response from sign and confirm: ", res);
     
             return {
                 status: "success",
@@ -478,7 +478,7 @@ export class TokenStream extends ZebecStream {
     async pause(data: any): Promise<any> {
         const { sender, receiver, pda } = data;
 
-        console.log("pause token stream data: ", data);
+        // console.log("pause token stream data: ", data);
 
         const senderAddress = new PublicKey(sender);
         const recipientAddress = new PublicKey(receiver);
@@ -499,11 +499,11 @@ export class TokenStream extends ZebecStream {
             tx.recentBlockhash = recentHash.blockhash;
             tx.feePayer = this.walletProvider.publicKey;
             
-            console.log("transaction ix after adding properties: ", tx);
+            // console.log("transaction ix after adding properties: ", tx);
     
             const res = await this._signAndConfirm(tx);
 
-            console.log("response from sign and confirm: ", res);
+            // console.log("response from sign and confirm: ", res);
     
             return {
                 status: "success",
@@ -525,7 +525,7 @@ export class TokenStream extends ZebecStream {
     async resume(data: any): Promise<any> {
         const { sender, receiver, pda } = data;
 
-        console.log("resume token stream data: ", data);
+        // console.log("resume token stream data: ", data);
 
         const senderAddress = new PublicKey(sender);
         const recipientAddress = new PublicKey(receiver);
@@ -545,11 +545,11 @@ export class TokenStream extends ZebecStream {
             tx.recentBlockhash = recentHash.blockhash;
             tx.feePayer = this.walletProvider.publicKey;
             
-            console.log("transaction ix after adding properties: ", tx);
+            // console.log("transaction ix after adding properties: ", tx);
     
             const res = await this._signAndConfirm(tx);
 
-            console.log("response from sign and confirm: ", res);
+            // console.log("response from sign and confirm: ", res);
     
             return {
                 status: "success",
@@ -570,7 +570,7 @@ export class TokenStream extends ZebecStream {
     async cancel(data: any): Promise<any> {
         const { sender, receiver, token, pda} = data;
 
-        console.log("cancel token stream data: ", data);
+        // console.log("cancel token stream data: ", data);
 
         const senderAddress = new PublicKey(sender);
         const recipientAddress = new PublicKey(receiver);
@@ -604,11 +604,11 @@ export class TokenStream extends ZebecStream {
             tx.recentBlockhash = recentHash.blockhash;
             tx.feePayer = this.walletProvider.publicKey;
             
-            console.log("transaction ix after adding properties: ", tx);
+            // console.log("transaction ix after adding properties: ", tx);
     
             const res = await this._signAndConfirm(tx);
 
-            console.log("response from sign and confirm: ", res);
+            // console.log("response from sign and confirm: ", res);
     
             return {
                 status: "success",
@@ -630,7 +630,7 @@ export class TokenStream extends ZebecStream {
 
     async withdraw(data: any): Promise<any> {
         const { sender, receiver, token, pda, amount } = data;
-        console.log("withdraw token stream data: ", data);
+        // console.log("withdraw token stream data: ", data);
 
         const senderAddress = new PublicKey(sender);
         const recipientAddress = new PublicKey(receiver);
@@ -672,11 +672,11 @@ export class TokenStream extends ZebecStream {
             tx.recentBlockhash = recentHash.blockhash;
             tx.feePayer = this.walletProvider.publicKey;
             
-            console.log("transaction ix after adding properties: ", tx);
+            // console.log("transaction ix after adding properties: ", tx);
     
             const res = await this._signAndConfirm(tx);
 
-            console.log("response from sign and confirm: ", res);
+            // console.log("response from sign and confirm: ", res);
     
             return {
                 status: "success",
@@ -698,7 +698,7 @@ export class TokenStream extends ZebecStream {
     async deposit(data: any): Promise<any> {
         const { sender, token, amount } = data;
 
-        console.log("deposit token stream data: ", data);
+        // console.log("deposit token stream data: ", data);
 
         const senderAddress = new PublicKey(sender);
         const tokenMintAddress = new PublicKey(token);
@@ -710,8 +710,8 @@ export class TokenStream extends ZebecStream {
         const _SYSTEM_RENT = new PublicKey(SYSTEM_RENT);
         const _A_TOKEN = new PublicKey(A_TOKEN);
 
-        console.log("Sender Associated Token Address", senderAssociatedTokenAddress);
-        console.log("Zebec Wallet Associated Token Address", zebecWalletAssociatedTokenAddress);
+        // console.log("Sender Associated Token Address", senderAssociatedTokenAddress);
+        // console.log("Zebec Wallet Associated Token Address", zebecWalletAssociatedTokenAddress);
 
         const ix = await INSTRUCTIONS.createDepositMultiTokenInstruction(
             senderAddress,
@@ -733,11 +733,11 @@ export class TokenStream extends ZebecStream {
             tx.recentBlockhash = recentHash.blockhash;
             tx.feePayer = this.walletProvider.publicKey;
             
-            console.log("transaction ix after adding properties: ", tx);
+            // console.log("transaction ix after adding properties: ", tx);
     
             const res = await this._signAndConfirm(tx);
 
-            console.log("response from sign and confirm: ", res);
+            // console.log("response from sign and confirm: ", res);
     
             return {
                 status: "success",
@@ -758,7 +758,7 @@ export class TokenStream extends ZebecStream {
     async withdrawDepositedToken(data: any): Promise<any> {
         const { sender, token, amount } = data;
 
-        console.log("withdraw deposited token data: ", data);
+        // console.log("withdraw deposited token data: ", data);
 
         const senderAddress = new PublicKey(sender);
         const tokenMintAddress = new PublicKey(token);
@@ -787,11 +787,11 @@ export class TokenStream extends ZebecStream {
             tx.recentBlockhash = recentHash.blockhash;
             tx.feePayer = this.walletProvider.publicKey;
             
-            console.log("transaction ix after adding properties: ", tx);
+            // console.log("transaction ix after adding properties: ", tx);
     
             const res = await this._signAndConfirm(tx);
 
-            console.log("response from sign and confirm: ", res);
+            // console.log("response from sign and confirm: ", res);
     
             return {
                 status: "success",
