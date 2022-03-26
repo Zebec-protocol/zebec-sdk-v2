@@ -85,7 +85,7 @@ export const createResumeMultiTokenStreamInstruction = async (
     return new TransactionInstruction({
         keys,
         programId,
-        data: Buffer.from(serialize(SCHEMA.ResumeSolStreamSchema, new SCHEMA.ResumeMultiTokenStream(ixData)))
+        data: Buffer.from(serialize(SCHEMA.ResumeMultiTokenStreamSchema, new SCHEMA.ResumeMultiTokenStream(ixData)))
     })
 }
 

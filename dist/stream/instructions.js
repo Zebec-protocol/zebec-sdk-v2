@@ -138,7 +138,7 @@ var createResumeMultiTokenStreamInstruction = function (sender, recipient, tx_es
         return [2 /*return*/, new web3_js_1.TransactionInstruction({
                 keys: keys,
                 programId: programId,
-                data: buffer_1.Buffer.from((0, borsh_1.serialize)(SCHEMA.ResumeSolStreamSchema, new SCHEMA.ResumeMultiTokenStream(ixData)))
+                data: buffer_1.Buffer.from((0, borsh_1.serialize)(SCHEMA.ResumeMultiTokenStreamSchema, new SCHEMA.ResumeMultiTokenStream(ixData)))
             })];
     });
 }); };
