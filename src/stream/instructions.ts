@@ -176,7 +176,7 @@ export const createWithdrawMultiTokenStreamInstruction = async(
 
     const ixData = {
         instruction: INSTRUCTION.WITHDRAW_TOKEN_STREAM,
-        amount
+        amount: (amount * LAMPORTS_PER_SOL).toString()
     }
 
     return new TransactionInstruction({

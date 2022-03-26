@@ -198,7 +198,7 @@ var createWithdrawMultiTokenStreamInstruction = function (senderAddress, recipie
         ];
         ixData = {
             instruction: constants_1.INSTRUCTION.WITHDRAW_TOKEN_STREAM,
-            amount: amount
+            amount: (amount * web3_js_1.LAMPORTS_PER_SOL).toString()
         };
         return [2 /*return*/, new web3_js_1.TransactionInstruction({
                 keys: keys,
