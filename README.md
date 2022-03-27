@@ -5,7 +5,7 @@
 ### Initiate Stream: Native
 
 ```typescript
-const stream = new StreamNative(walletProvider, rpcUrl, commitment?);
+const stream = new NativeStream(walletProvider, rpcUrl, commitment?);
 
 const response = await stream.init(
     {
