@@ -394,7 +394,6 @@ export class NativeStream extends ZebecStream {
 }
 
 
-
 export class TokenStream extends ZebecStream {
     constructor(
         walletProvider: any,
