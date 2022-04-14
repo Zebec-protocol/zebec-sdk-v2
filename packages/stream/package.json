@@ -1,6 +1,6 @@
 {
   "name": "@zebec-labs/stream",
-  "version": "1.0.0",
+  "version": "1.0.3",
   "description": "Zebec Protocol SDK V2",
   "types": "dist/index.d.ts",
   "keywords": [
@@ -18,7 +18,8 @@
   "main": "dist/index.js",
   "files": [
     "/dist/*.*",
-    "/src"
+    "/src",
+    "/dist/**/*.*"
   ],
   "scripts": {
     "build": "npm run clean; tsc",
@@ -34,7 +35,7 @@
   "license": "ISC",
   "homepage": "https://github.com/Zebec-protocol/zebec-sdk-v2#readme",
   "dependencies": {
-    "@solana/spl-token": "^0.2.0",
+    "@solana/spl-token": "^0.1.8",
     "@solana/web3.js": "^1.36.0",
     "borsh": "^0.7.0",
     "buffer": "^6.0.3"
