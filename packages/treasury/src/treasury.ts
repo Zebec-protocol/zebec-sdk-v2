@@ -1,5 +1,5 @@
 import { Commitment, Connection, ConnectionConfig, Keypair, PublicKey, Transaction } from "@solana/web3.js";
-import { ZEBEC_PROGRAM_ID, RPC_ENDPOINTS, SAFE_STRING, WITHDRAW_SOL_STRING, WITHDRAW_MULTISIG_SOL_STRING, FEE_ADDRESS } from "../constants";
+import { ZEBEC_PROGRAM_ID, RPC_ENDPOINTS, SAFE_STRING, WITHDRAW_SOL_STRING, WITHDRAW_MULTISIG_SOL_STRING, FEE_ADDRESS } from "./constants";
 import * as INSTRUCTIONS from './instructions';
 import { Signer, WhiteList } from "./schema";
 import { SignAndConfirm, StreamTransactionResponse } from "./types";

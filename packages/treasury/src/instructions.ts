@@ -1,6 +1,6 @@
 import { LAMPORTS_PER_SOL, PublicKey, SystemProgram, TransactionInstruction } from "@solana/web3.js";
 import { serialize } from "borsh";
-import { INSTRUCTION } from "../constants";
+import { INSTRUCTION } from "./constants";
 import * as SCHEMA from './schema';
 
 export const createMultiSigSafeInstruction = async (
