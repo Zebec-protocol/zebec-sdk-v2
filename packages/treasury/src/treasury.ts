@@ -707,7 +707,6 @@ export class TokenTreasury extends ZebecTreasury {
         )
     }
 
-    // deposit token
     async deposit(data: any): Promise<StreamTransactionResponse> {
         const { sender, token_mint_address, zebec_safe, vault_escrow, amount } = data;
         console.log("deposit token to zebec safe: ", data);
@@ -773,6 +772,58 @@ export class TokenTreasury extends ZebecTreasury {
         }
     }
     // sign stream
+    async sign(data: any): Promise<any> {
+        const { sender, zebec_safe, token_mint_address, tx_escrow, vault_escrow } = data;
+        console.log("sign token stream tx data: ", data);
+
+        const senderAddress = new PublicKey(sender);
+        const tokenMintAddress = new PublicKey(token_mint_address);
+        const txEscrowAddress = new PublicKey(tx_escrow);
+        const zebecWalletEscrowAddress = new PublicKey(vault_escrow);
+        const zebecSafeAddress = new PublicKey(zebec_safe);
+        const [withdrawEscrowAddress, _] = await this._findWithdrawEscrowAccount(WITHDRAW_MULTISIG_TOKEN_STRING, zebecSafeAddress, tokenMintAddress);
+        
+        const signer = new Signer({ address: senderAddress, counter: 0 });
+
+        const ix = await INSTRUCTIONS.createMultiSigTokenSignInstruction(
+            senderAddress,
+            txEscrowAddress,
+            zebecWalletEscrowAddress,
+            withdrawEscrowAddress,
+            this._programId,
+            signer
+        )
+
+        const tx = new Transaction().add({...ix});
+
+        const recentHash = await this._connection.getRecentBlockhash();
+
+        try {
+            tx.recentBlockhash = recentHash.blockhash;
+            tx.feePayer = this.walletProvider.publicKey;
+
+            console.log("transaction ix after adding properties: ", tx);
+
+            const res = await this._signAndConfirm(tx);
+
+            console.log("response from sign and confirm: ", res);
+
+            return {
+                status: "success",
+                message: "signed tx.",
+                data: {
+                    ...res
+                }
+            }
+        } catch(e) {
+            return {
+                status: "error",
+                message: e,
+                data: null
+            }
+        }
+
+    }
     // reject stream
     // init
     // pause

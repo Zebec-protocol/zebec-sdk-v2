@@ -444,3 +444,34 @@ export const createMultiSigDepositTokenInstruction = async(
         )
     })
 }
+
+export const createMultiSigTokenSignInstruction = async(
+    senderAddress: PublicKey,
+    txEscrowAddress: PublicKey,
+    zebecWalletEscrowAddress: PublicKey,
+    withdrawEscrowAddress: PublicKey,
+    programId: PublicKey,
+    signer: any
+): Promise<TransactionInstruction> => {
+
+    const keys = [
+        { pubkey: senderAddress, isSigner: true, isWritable: true },
+        { pubkey: txEscrowAddress, isSigner: false, isWritable: true },
+        { pubkey: zebecWalletEscrowAddress, isSigner: false, isWritable: true },
+        { pubkey: withdrawEscrowAddress, isSigner: false, isWritable: true },
+        { pubkey: SystemProgram.programId, isSigner: false, isWritable: false }
+    ];
+    
+    const ixData = {
+        instruction: INSTRUCTION.SIGNED_BY_TOKEN_MULTISIG,
+        signed_by: signer
+    };
+
+    return new TransactionInstruction({
+        keys,
+        programId,
+        data: Buffer.from(
+            serialize(SCHEMA.MultiSigTokenSignSchema, new SCHEMA.MultiSigTokenSign({...ixData}))
+        )
+    })
+}
