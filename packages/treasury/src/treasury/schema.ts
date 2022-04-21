@@ -1,0 +1,239 @@
+class Base {
+    constructor(properties: {}) {
+        Object.keys(properties).map((key) => {
+            return (this[key] = properties[key]);
+        });
+    }
+}
+
+export class Signer extends Base {}
+export class WhiteList extends Base {}
+export class MultiSigSafe extends Base {}
+export class MultiSigDeposit extends Base {}
+export class MultiSigSign extends Base {}
+export class MultiSigReject extends Base {}
+export class MultiSigInit extends Base {}
+export class MultiSigPause extends Base {}
+export class MultiSigCancel extends Base {}
+export class MultiSigResume extends Base {}
+export class MultiSigWithdraw extends Base {}
+export class MultiSigSignInstant extends Base {}
+export class MultiSigRejectInstant extends Base {}
+export class MultiSigInitInstant extends Base {}
+
+
+export const MultiSigSafeSchema =  new Map([
+    [
+        WhiteList,
+        {
+            kind: "struct",
+            fields: [
+                ["instruction", "u8"],
+                ["signers", [Signer]],
+                ["m", "u8"],
+                ["multisig_safe", "pubkey"]
+            ]
+        }
+    ],
+    [
+        Signer,
+        {
+            kind: "struct",
+            fields: [
+                ["address", "pubkey"],
+                ["counter", "u8"]
+            ]
+        }
+    ]
+])
+
+export const MultiSigDepositSchema = new Map([
+    [
+        MultiSigDeposit,
+        {
+            kind: "struct",
+            fields: [
+                ["instruction", "u8"],
+                ["amount", "u8"]
+            ]
+        }
+    ]
+])
+
+export const MultiSigSignSchema = new Map([
+    [
+        MultiSigSign,
+        {
+            kind: "struct",
+            fields: [
+                ["instruction", "u8"],
+                ["signed_by", Signer]
+            ]
+        }
+    ],
+    [
+        Signer,
+        {
+            kind: "struct",
+            fields: [
+                ["address", "pubkey"],
+                ["counter", "u8"]
+            ]
+        }
+    ]
+])
+
+export const MultiSigRejectSchema = new Map([
+    [
+        MultiSigReject,
+        {
+            kind: "struct",
+            fields: [
+                ["instruction", "u8"]
+            ]
+        }
+    ]
+])
+
+export const MultiSigInitSchema = new Map([
+    [
+        MultiSigInit,
+        {
+            kind: "struct",
+            fields: [
+                ["instruction", "u8"],
+                ["start_time", "u64"],
+                ["end_time", "u64"],
+                ["paused", "u64"],
+                ["withdraw_limit", "u64"],
+                ["amount", "u64"],
+                ["sender", "pubkey"],
+                ["recipient", "pubkey"],
+                ["signed_by", [Signer]],
+                ["multisig_safe", "pubkey"],
+                ["can_cancel", "u8"]
+            ]
+        }
+    ],
+    [
+        Signer,
+        {
+            kind: "struct",
+            fields: [
+                ["address", "pubkey"],
+                ["counter", "u8"]
+            ]
+        }
+    ]
+])
+
+export const MultiSigPauseSchema = new Map([
+    [
+        MultiSigPause,
+        {
+            kind: "struct",
+            fields: [
+                ["instruction", "u8"]
+            ]
+        }
+    ]
+])
+
+export const MultiSigCancelSchema = new Map([
+    [
+        MultiSigCancel,
+        {
+            kind: "struct",
+            fields: [
+                ["instruction", "u8"]
+            ]
+        }
+    ]
+])
+
+export const MultiSigResumeSchema = new Map([
+    [
+        MultiSigResume,
+        {
+            kind: "struct",
+            fields: [
+                ["instruction", "u8"]
+            ]
+        }
+    ]
+])
+
+export const MultiSigWithdrawSchema = new Map([
+    [
+        MultiSigWithdraw,
+        {
+            kind: "struct",
+            fields: [
+                ["instruction", "u8"],
+                ["amount", "u64"]
+            ]
+        }
+    ]
+])
+
+export const MultiSigSignInstantSchema = new Map([
+    [
+        MultiSigSignInstant,
+        {
+            kind: "struct",
+            fields: [
+                ["instruction", "u8"],
+                ["signed_by", Signer]
+            ]
+        }
+    ],
+    [
+        Signer,
+        {
+            kind: "struct",
+            fields: [
+                ["address", "pubkey"],
+                ["counter", "u8"]
+            ]
+        }
+    ]
+])
+
+export const MultiSigRejectInstantSchema = new Map([
+    [
+        MultiSigRejectInstant,
+        {
+            kind: "struct",
+            fields: [
+                ["instruction", "u8"]
+            ]
+        }
+    ]
+])
+
+export const MultiSigInitInstantSchema = new Map([
+    [
+        MultiSigInitInstant,
+        {
+            kind: "struct",
+            fields: [
+                ["instruction", "u8"],
+                ["sender", "pubkey"],
+                ["recipient", "pubkey"],
+                ["signed_by", [Signer]],
+                ["multisig_safe", "pubkey"],
+                ["amount", "u64"]
+            ]
+        }
+    ],
+    [
+        Signer,
+        {
+            kind: "struct",
+            fields: [
+                ["address", "pubkey"],
+                ["counter", "u8"]
+            ]
+        }
+    ]
+])
