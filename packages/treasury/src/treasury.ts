@@ -664,7 +664,8 @@ export class NativeTreasury extends ZebecTreasury {
                 status: "success",
                 message: "started instant tx",
                 data: {
-                    ...res
+                    ...res,
+                    tx_escrow: escrow.publicKey.toBase58()
                 }
             }
         } catch(e) {
