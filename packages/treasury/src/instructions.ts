@@ -397,3 +397,50 @@ export const createMultiSigInitInstantInstruction = async(
         )
     })
 }
+
+export const createMultiSigDepositTokenInstruction = async(
+    senderAddress: PublicKey,
+    zebecSafeAddress: PublicKey,
+    zebecWalletEscrowAddress: PublicKey,
+    TOKEN_PROGRAM_ADDRESS: PublicKey,
+    tokenMintAddress: PublicKey,
+    senderAssociatedAddress: PublicKey,
+    zebecWalletAddress: PublicKey,
+    withdrawEscrowAddress: PublicKey,
+    escrowAssociatedAddress: PublicKey,
+    zebecWalletAssociatedAddress: PublicKey,
+    SYSTEM_RENT_ADDRESS: PublicKey,
+    SPL_ASSOCIATED_TOKEN_ADDRESS: PublicKey,
+    programId: PublicKey,
+    amount: number
+): Promise<TransactionInstruction> => {
+
+    const keys = [
+        { pubkey: senderAddress, isSigner: true, isWritable: true },
+        { pubkey: zebecSafeAddress, isSigner: false, isWritable: true },
+        { pubkey: zebecWalletEscrowAddress, isSigner: false, isWritable: true },
+        { pubkey: TOKEN_PROGRAM_ADDRESS, isSigner: false, isWritable: false },
+        { pubkey: tokenMintAddress, isSigner: false, isWritable: false },
+        { pubkey: senderAssociatedAddress, isSigner: false, isWritable: true },
+        { pubkey: zebecWalletAddress, isSigner: false, isWritable: true },
+        { pubkey: withdrawEscrowAddress, isSigner: false, isWritable: true },
+        { pubkey: escrowAssociatedAddress, isSigner: false, isWritable: true },
+        { pubkey: zebecWalletAssociatedAddress, isSigner: false, isWritable: true },
+        { pubkey: SYSTEM_RENT_ADDRESS, isSigner: false, isWritable: false },
+        { pubkey: SPL_ASSOCIATED_TOKEN_ADDRESS, isSigner: false, isWritable: false },
+        { pubkey: SystemProgram.programId, isSigner: false, isWritable: false }
+    ];
+
+    const ixData = {
+        instruction: INSTRUCTION.SWAP_TOKEN,
+        amount: (amount * LAMPORTS_PER_SOL).toString()
+    };
+
+    return new TransactionInstruction({
+        keys,
+        programId,
+        data: Buffer.from(
+            serialize(SCHEMA.MultiSigDepositTokenSchema, new SCHEMA.MultiSigDepositToken({...ixData}))
+        )
+    })
+}

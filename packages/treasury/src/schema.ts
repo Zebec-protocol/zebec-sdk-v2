@@ -20,6 +20,7 @@ export class MultiSigWithdraw extends Base {}
 export class MultiSigSignInstant extends Base {}
 export class MultiSigRejectInstant extends Base {}
 export class MultiSigInitInstant extends Base {}
+export class MultiSigDepositToken extends Base {}
 
 
 export const MultiSigSafeSchema =  new Map([
@@ -233,6 +234,19 @@ export const MultiSigInitInstantSchema = new Map([
             fields: [
                 ["address", "pubkey"],
                 ["counter", "u8"]
+            ]
+        }
+    ]
+])
+
+export const MultiSigDepositTokenSchema = new Map([
+    [
+        MultiSigDepositToken,
+        {
+            kind: "struct",
+            fields: [
+                ["instruction", "u8"],
+                ["amount", "u64"]
             ]
         }
     ]

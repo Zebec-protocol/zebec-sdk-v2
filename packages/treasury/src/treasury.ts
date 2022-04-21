@@ -1,8 +1,8 @@
 import { Commitment, Connection, ConnectionConfig, Keypair, PublicKey, Transaction } from "@solana/web3.js";
-import { ZEBEC_PROGRAM_ID, RPC_ENDPOINTS, SAFE_STRING, WITHDRAW_SOL_STRING, WITHDRAW_MULTISIG_SOL_STRING, FEE_ADDRESS } from "./constants";
+import { ZEBEC_PROGRAM_ID, RPC_ENDPOINTS, SAFE_STRING, WITHDRAW_SOL_STRING, WITHDRAW_MULTISIG_SOL_STRING, FEE_ADDRESS, WITHDRAW_MULTISIG_TOKEN_STRING, WITHDRAW_TOKEN_STRING, _TOKEN_PROGRAM_ID, SPL_ASSOCIATED_TOKEN_ACCOUNT_PROGRAM_ID, SYSTEM_RENT } from "./constants";
 import * as INSTRUCTIONS from './instructions';
 import { Signer, WhiteList } from "./schema";
-import { SignAndConfirm, StreamTransactionResponse } from "./types";
+import { StreamTransactionResponse } from "./types";
 
 class ZebecTreasury {
     protected _connection: Connection;
@@ -625,7 +625,7 @@ export class NativeTreasury extends ZebecTreasury {
         }
     }
 
-    async initInstant(data: any): Promise<any>{
+    async initInstant(data: any): Promise<StreamTransactionResponse>{
         const { sender, receiver, amount, vault_escrow } = data;
         console.log("init instant multisig tx datA: ", data);
 
@@ -675,5 +675,109 @@ export class NativeTreasury extends ZebecTreasury {
             }
         }
     }
+
+}
+
+export class TokenTreasury extends ZebecTreasury {
+
+    constructor(
+        walletProvider: any,
+        rpcUrl: string = RPC_ENDPOINTS.DEFAULT,
+        commitment: Commitment | undefined = "confirmed"
+    ) {
+        super(walletProvider, rpcUrl, commitment);
+        console.log("Token Treasury Intialized!");
+    }
+
+    protected async _findWithdrawEscrowAccount(withdrawString: string, walletAddress: PublicKey, tokenMintAddress: PublicKey): Promise<[PublicKey, number]> {
+        return await PublicKey.findProgramAddress(
+            [Buffer.from(withdrawString), walletAddress.toBuffer(), tokenMintAddress.toBuffer()],
+            this._programId
+        )
+    }
+
+    protected async _findAssociatedTokenAddress(walletAddress: PublicKey, tokenMintAddress: PublicKey): Promise<[PublicKey, number]> {
+       
+        const TOKEN_PROGRAM_ADDRESS = new PublicKey(_TOKEN_PROGRAM_ID);
+        const SPL_ASSOCIATED_TOKEN_ADDRESS = new PublicKey(SPL_ASSOCIATED_TOKEN_ACCOUNT_PROGRAM_ID);       
+
+        return await PublicKey.findProgramAddress(
+            [walletAddress.toBuffer(), TOKEN_PROGRAM_ADDRESS.toBuffer(), tokenMintAddress.toBuffer()],
+            SPL_ASSOCIATED_TOKEN_ADDRESS
+        )
+    }
+
+    // deposit token
+    async deposit(data: any): Promise<StreamTransactionResponse> {
+        const { sender, token_mint_address, zebec_safe, vault_escrow, amount } = data;
+        console.log("deposit token to zebec safe: ", data);
+
+        const senderAddress = new PublicKey(sender);
+        const tokenMintAddress = new PublicKey(token_mint_address);
+        const zebecSafeAddress = new PublicKey(zebec_safe);
+        const zebecWalletEscrowAddress = new PublicKey(vault_escrow);
+        const TOKEN_PROGRAM_ADDRESS = new PublicKey(_TOKEN_PROGRAM_ID);
+        const SYSTEM_RENT_ADDRESS = new PublicKey(SYSTEM_RENT);
+        const SPL_ASSOCIATED_TOKEN_ADDRESS = new PublicKey(SPL_ASSOCIATED_TOKEN_ACCOUNT_PROGRAM_ID);
+
+        const [withdrawEscrowAddress, _] = await this._findWithdrawEscrowAccount(WITHDRAW_TOKEN_STRING, senderAddress, tokenMintAddress);
+        const [senderAssociatedAddress, __] = await this._findAssociatedTokenAddress(senderAddress, tokenMintAddress);
+        const [zebecWalletAddress, ___] = await this._findZebecWalletAccount(senderAddress);
+        const [escrowAssociatedAddress, _____] = await this._findAssociatedTokenAddress(zebecSafeAddress, tokenMintAddress);
+        const [zebecWalletAssociatedAddress, ____] = await this._findAssociatedTokenAddress(zebecWalletAddress, tokenMintAddress)
+
+        const ix = await INSTRUCTIONS.createMultiSigDepositTokenInstruction(
+            senderAddress,
+            zebecSafeAddress,
+            zebecWalletEscrowAddress,
+            TOKEN_PROGRAM_ADDRESS,
+            tokenMintAddress,
+            senderAssociatedAddress,
+            zebecWalletAddress,
+            withdrawEscrowAddress,
+            escrowAssociatedAddress,
+            zebecWalletAssociatedAddress,
+            SYSTEM_RENT_ADDRESS,
+            SPL_ASSOCIATED_TOKEN_ADDRESS,
+            this._programId,
+            amount
+        )
+
+        const tx = new Transaction().add({...ix});
+
+        const recentHash = await this._connection.getRecentBlockhash();
+
+        try {
+            tx.recentBlockhash = recentHash.blockhash;
+            tx.feePayer = this.walletProvider.publicKey;
+
+            console.log("transaction ix after adding properties: ", tx);
+
+            const res = await this._signAndConfirm(tx);
+
+            console.log("response from sign and confirm: ", res);
+
+            return {
+                status: "success",
+                message: "deposited token.",
+                data: {
+                    ...res
+                }
+            }
+        } catch(e) {
+            return {
+                status: "error",
+                message: e,
+                data: null
+            }
+        }
+    }
+    // sign stream
+    // reject stream
+    // init
+    // pause
+    // cancel
+    // resume
+    // withdraw
 
 }
