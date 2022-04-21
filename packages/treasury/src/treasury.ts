@@ -653,6 +653,7 @@ export class NativeTreasury extends ZebecTreasury {
         try {
             tx.recentBlockhash = recentHash.blockhash;
             tx.feePayer = this.walletProvider.publicKey;
+            tx.partialSign(escrow);
 
             console.log("transaction ix after adding properties: ", tx);
 
