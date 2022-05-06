@@ -1,6 +1,6 @@
 {
   "name": "zebecsdk",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Zebec Protocol SDK V2",
   "types": "dist/index.d.ts",
   "keywords": [
