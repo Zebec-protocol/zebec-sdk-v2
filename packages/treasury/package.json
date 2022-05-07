@@ -1,5 +1,5 @@
 {
-    "name": "@zebec-labs/treasury",
+    "name": "@zebec-protocol/treasury",
     "version": "1.0.0",
     "description": "Zebec Protocol SDK V2 - Treasury Management",
     "types": "dist/index.d.ts",
