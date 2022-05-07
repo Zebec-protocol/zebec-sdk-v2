@@ -1,8 +1,8 @@
 import { Buffer } from 'buffer'
 import { serialize } from "borsh";
-import { Keypair, LAMPORTS_PER_SOL, PublicKey, SystemProgram, Transaction, TransactionInstruction } from "@solana/web3.js";
+import { Keypair, LAMPORTS_PER_SOL, PublicKey, SystemProgram, TransactionInstruction } from "@solana/web3.js";
 import * as SCHEMA from "./schema";
-import { A_TOKEN, FEE_ADDRESS, INSTRUCTION, SYSTEM_RENT, _TOKEN_PROGRAM_ID } from "../constants";
+import { A_TOKEN, FEE_ADDRESS, INSTRUCTION, SYSTEM_RENT, _TOKEN_PROGRAM_ID } from "./constants";
 
 
 export const createInitMultiTokenStreamInstruction = async (

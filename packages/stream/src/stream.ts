@@ -1,6 +1,6 @@
 import { TOKEN_PROGRAM_ID } from "@solana/spl-token";
 import { Commitment, Connection, ConnectionConfig, Keypair, PublicKey, SystemProgram, Transaction } from "@solana/web3.js";
-import { ZEBEC_PROGRAM_ID, RPC_ENDPOINTS, WITHDRAW_SOL_STRING, WITHDRAW_TOKEN_STRING, SPL_ASSOCIATED_TOKEN_ACCOUNT_PROGRAM_ID, FEE_ADDRESS, _TOKEN_PROGRAM_ID, SYSTEM_RENT, A_TOKEN } from "../constants";
+import { ZEBEC_PROGRAM_ID, RPC_ENDPOINTS, WITHDRAW_SOL_STRING, WITHDRAW_TOKEN_STRING, SPL_ASSOCIATED_TOKEN_ACCOUNT_PROGRAM_ID, FEE_ADDRESS, _TOKEN_PROGRAM_ID, SYSTEM_RENT, A_TOKEN } from "./constants";
 import * as INSTRUCTIONS from './instructions'
 import { DepositWithdrawSol, InitNativeStream, PauseResumeCancelNativeStream, SignAndConfirm, StreamTransactionResponse, WithdrawNativeStream } from "./types";
 
