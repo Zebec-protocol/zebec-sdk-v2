@@ -2,7 +2,7 @@
     "compilerOptions": {
       "target": "es5",
       "allowJs": true,
-      "declaration": false,
+      "declaration": true,
       // "strict": true,
       "outDir": "dist",
       "lib": ["es6", "dom", "dom.iterable", "esnext"],
