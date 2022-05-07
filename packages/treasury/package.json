@@ -1,0 +1,60 @@
+{
+    "name": "@zebec-labs/treasury",
+    "version": "1.0.0",
+    "description": "Zebec Protocol SDK V2 - Treasury Management",
+    "types": "dist/index.d.ts",
+    "keywords": [
+      "zebec",
+      "zebec protocol",
+      "money streaming",
+      "stream",
+      "zbc",
+      "multisig",
+      "treasury"
+    ],
+    "bugs": {
+      "url": "https://github.com/Zebec-protocol/zebec-sdk-v2"
+    },
+    "main": "dist/index.js",
+    "files": [
+      "/dist/*.*",
+      "/src",
+      "/dist/**/*.*"
+    ],
+    "scripts": {
+      "build": "npm run clean; tsc",
+      "clean": "rm -rf ./dist",
+      "publish": "npm publish --access public",
+      "start": "ts-node src/index.ts"
+    },
+    "repository": {
+      "type": "git",
+      "url": "https://github.com/Zebec-protocol/zebec-sdk-v2"
+    },
+    "author": "Zebec Protocol | Ashish",
+    "license": "ISC",
+    "homepage": "https://github.com/Zebec-protocol/zebec-sdk-v2#readme",
+    "dependencies": {
+      "@solana/spl-token": "^0.1.8",
+      "@solana/web3.js": "^1.36.0",
+      "borsh": "^0.7.0",
+      "buffer": "^6.0.3"
+    },
+    "devDependencies": {
+      "@babel/core": "^7.17.8",
+      "@babel/plugin-proposal-class-properties": "^7.16.7",
+      "@babel/plugin-transform-runtime": "^7.17.0",
+      "@babel/preset-env": "^7.16.11",
+      "@babel/preset-typescript": "^7.16.7",
+      "@babel/register": "^7.17.7",
+      "@types/node": "^17.0.22",
+      "@typescript-eslint/eslint-plugin": "^5.16.0",
+      "@typescript-eslint/parser": "^5.16.0",
+      "eslint": "^8.11.0",
+      "esm": "^3.2.25",
+      "prettier": "^2.6.0",
+      "ts-node": "^10.7.0",
+      "typescript": "^4.6.2"
+    }
+  }
+  
