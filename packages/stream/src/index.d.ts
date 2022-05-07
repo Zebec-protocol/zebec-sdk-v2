@@ -1,1 +1,1 @@
-declare module '@zebec-labs/stream';
+declare module '@zebec-protocol/stream';
