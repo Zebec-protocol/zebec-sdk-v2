@@ -23,6 +23,14 @@ export class MultiSigInitInstant extends Base {}
 export class MultiSigDepositToken extends Base {}
 export class MultiSigTokenSign extends Base {}
 
+export class MultiSigTokenReject extends Base {}
+export class MultiSigTokenPause extends Base {}
+export class MultiSigTokenCancel extends Base {}
+export class MultiSigTokenResume extends Base {}
+export class MultiSigTokenWithdraw extends Base {}
+export class MultiSigTokenInit extends Base {}
+
+
 export const MultiSigSafeSchema =  new Map([
     [
         WhiteList,
@@ -260,6 +268,99 @@ export const MultiSigTokenSignSchema = new Map([
             fields: [
                 ["instruction", "u8"],
                 ["signed_by", Signer]
+            ]
+        }
+    ],
+    [
+        Signer,
+        {
+            kind: "struct",
+            fields: [
+                ["address", "pubkey"],
+                ["counter", "u8"]
+            ]
+        }
+    ]
+])
+
+export const MultiSigTokenRejectSchema = new Map([
+    [
+        MultiSigTokenReject,
+        {
+            kind: "struct",
+            fields: [
+                ["instruction", "u8"]
+            ]
+        }
+    ]
+])
+
+export const MultiSigTokenPauseSchema = new Map([
+    [
+        MultiSigTokenPause,
+        {
+            kind: "struct",
+            fields: [
+                ["instruction", "u8"]
+            ]
+        }
+    ]
+])
+
+export const MultiSigTokenCancelSchema = new Map([
+    [
+        MultiSigTokenCancel,
+        {
+            kind: "struct",
+            fields: [
+                ["instruction", "u8"]
+            ]
+        }
+    ]
+])
+
+export const MultiSigTokenResumeSchema = new Map([
+    [
+        MultiSigTokenResume,
+        {
+            kind: "struct",
+            fields: [
+                ["instruction", "u8"]
+            ]
+        }
+    ]
+])
+
+export const MultiSigTokenWithdrawSchema = new Map([
+    [
+        MultiSigTokenWithdraw,
+        {
+            kind: "struct",
+            fields: [
+                ["instruction", "u8"],
+                ["amount", "u64"]
+            ]
+        }
+    ]
+])
+
+export const MultiSigTokenInitSchema = new Map([
+    [
+        MultiSigTokenInit,
+        {
+            kind: "struct",
+            fields: [
+                ["instruction", "u8"],
+                ["start_time", "u64"],
+                ["end_time", "u64"],
+                ["paused", "u64"],
+                ["withdraw_limit", "u64"],
+                ["amount", "u64"],
+                ["sender", "pubkey"],
+                ["recipient", "pubkey"],
+                ["token_mint", "pubkey"],
+                ["signed_by", [Signer]],
+                ["multisig_safe", "pubkey"]
             ]
         }
     ],

@@ -2,7 +2,7 @@
     "name": "@zebec-protocol/treasury",
     "version": "1.0.0",
     "description": "Zebec Protocol SDK V2 - Treasury Management",
-    "types": "dist/index.d.ts",
+    "types": "./dist/types/index.d.ts",
     "keywords": [
       "zebec",
       "zebec protocol",
@@ -15,11 +15,10 @@
     "bugs": {
       "url": "https://github.com/Zebec-protocol/zebec-sdk-v2"
     },
-    "main": "dist/index.js",
+    "main": "./dist/esm/index.js",
     "files": [
-      "/dist/*.*",
-      "/src",
-      "/dist/**/*.*"
+      "/dist",
+      "/src"
     ],
     "scripts": {
       "build": "npm run clean; tsc",
