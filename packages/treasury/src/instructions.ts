@@ -398,6 +398,9 @@ export const createMultiSigInitInstantInstruction = async(
     })
 }
 
+
+// Token
+
 export const createMultiSigDepositTokenInstruction = async(
     senderAddress: PublicKey,
     zebecSafeAddress: PublicKey,
@@ -472,6 +475,240 @@ export const createMultiSigTokenSignInstruction = async(
         programId,
         data: Buffer.from(
             serialize(SCHEMA.MultiSigTokenSignSchema, new SCHEMA.MultiSigTokenSign({...ixData}))
+        )
+    })
+}
+
+export const createMultiSigTokenRejectInstruction = async(
+    senderAddress: PublicKey,
+    escrowAddress: PublicKey,
+    vaultEscrowAddress: PublicKey,
+    programId: PublicKey
+): Promise<TransactionInstruction> => {
+
+    const keys = [
+        // { pubkey: signerAddress, isSigner: true, isWritable: true },
+        { pubkey: senderAddress, isSigner: false, isWritable: true },
+        { pubkey: escrowAddress, isSigner: false, isWritable: false },
+        { pubkey: vaultEscrowAddress, isSigner: false, isWritable: true }
+    ]
+    const ixData = {
+        instruction: INSTRUCTION.REJECT_TOKEN_STREAM_MULTISIG
+    }
+    
+    return new TransactionInstruction({
+        keys,
+        programId,
+        data: Buffer.from(
+            serialize(SCHEMA.MultiSigTokenRejectSchema, new SCHEMA.MultiSigTokenReject({...ixData}))
+        )
+    })
+}
+
+export const createMultiSigTokenPauseInstruction = async(
+    senderAddress: PublicKey,
+    recipientAddress: PublicKey,
+    txEscrowAddress: PublicKey,
+    vaultEscrowAddress: PublicKey,
+    programId: PublicKey
+): Promise<TransactionInstruction> => {
+
+    const keys = [
+        { pubkey: senderAddress, isSigner: true, isWritable: true },
+        { pubkey: recipientAddress, isSigner: false, isWritable: true },
+        { pubkey: txEscrowAddress, isSigner: false, isWritable: true },
+        { pubkey: vaultEscrowAddress, isSigner: false, isWritable: true }
+    ]
+
+    const ixData = {
+        instruction: INSTRUCTION.PAUSE_TOKEN_STREAM_MULTISIG
+    }
+
+
+    return new TransactionInstruction({
+        keys,
+        programId,
+        data: Buffer.from(
+            serialize(SCHEMA.MultiSigTokenPauseSchema, new SCHEMA.MultiSigTokenPause({...ixData}))
+        )
+    })
+}
+
+export const createMultiSigTokenCancelInstruction = async(
+    senderAddress: PublicKey,
+    recipientAddress: PublicKey,
+    multisigVaultAddress: PublicKey,
+    txEscrowAddress: PublicKey,
+    vaultEscrowAddress: PublicKey,
+    withdrawEscrowAddress: PublicKey,
+    TOKEN_PROGRAM_ADDRESS: PublicKey,
+    tokenMintAddress: PublicKey,
+    SYSTEM_RENT_ADDRESS: PublicKey,
+    recipientAssociatedAddress: PublicKey,
+    escrowAssociatedAddress: PublicKey,
+    SPL_ASSOCIATED_TOKEN_ADDRESS: PublicKey,
+    feeAddress: PublicKey,
+    feeAssociatedAddress: PublicKey,
+    programId: PublicKey,
+): Promise<TransactionInstruction> => {
+
+    const keys = [
+        { pubkey: senderAddress, isSigner: true, isWritable: true },
+        { pubkey: recipientAddress, isSigner: false, isWritable: true },
+        { pubkey: multisigVaultAddress, isSigner: false, isWritable: true },
+        { pubkey: txEscrowAddress, isSigner: false, isWritable: true },
+        { pubkey: vaultEscrowAddress, isSigner: false, isWritable: true },
+        { pubkey: withdrawEscrowAddress, isSigner: false, isWritable: true },
+        { pubkey: TOKEN_PROGRAM_ADDRESS, isSigner: false, isWritable: false },
+        { pubkey: tokenMintAddress, isSigner: false, isWritable: true },
+        { pubkey: SYSTEM_RENT_ADDRESS, isSigner: false, isWritable: false },
+        { pubkey: recipientAssociatedAddress, isSigner: false, isWritable: true },
+        { pubkey: escrowAssociatedAddress, isSigner: false, isWritable: true },
+        { pubkey: SPL_ASSOCIATED_TOKEN_ADDRESS, isSigner: false, isWritable: false },
+        { pubkey: SystemProgram.programId, isSigner: false, isWritable: false },
+        { pubkey: feeAddress, isSigner: false, isWritable: true },
+        { pubkey: feeAssociatedAddress, isSigner: false, isWritable: true }
+    ]
+    const ixData = {
+        instruction: INSTRUCTION.CANCEL_TOKEN_STREAM_MULTISIG
+    }
+
+    return new TransactionInstruction({
+        keys,
+        programId,
+        data: Buffer.from(
+            serialize(SCHEMA.MultiSigTokenCancelSchema, new SCHEMA.MultiSigTokenCancel({...ixData}))
+        )
+    })
+}
+
+export const createMultiSigTokenResumeInstruction = async(
+    senderAddress: PublicKey,
+    recipientAddress: PublicKey,
+    txEscrowAddress: PublicKey,
+    vaultEscrowAddress: PublicKey,
+    programId: PublicKey
+): Promise<TransactionInstruction> => {
+
+    const keys = [
+        { pubkey: senderAddress, isSigner: true, isWritable: true },
+        { pubkey: recipientAddress, isSigner: false, isWritable: true },
+        { pubkey: txEscrowAddress, isSigner: false, isWritable: true },
+        { pubkey: vaultEscrowAddress, isSigner: false, isWritable: true }
+    ]
+
+    const ixData = {
+        instruction: INSTRUCTION.RESUME_TOKEN_STREAM_MULTISIG
+    }
+
+    return new TransactionInstruction({
+        keys,
+        programId,
+        data: Buffer.from(
+            serialize(SCHEMA.MultiSigTokenResumeSchema, new SCHEMA.MultiSigTokenResume({...ixData}))
+        )
+    })
+}
+
+export const createMultiSigTokenWithdrawInstruction = async(
+    senderAddress: PublicKey,
+    recipientAddress: PublicKey,
+    multisigVaultAddress: PublicKey,
+    vaultEscrowAddress: PublicKey,
+    txEscrowAddress: PublicKey,
+    withdrawEscrowAddress: PublicKey,
+    TOKEN_PROGRAM_ADDRESS: PublicKey,
+    tokenMintAddress: PublicKey,
+    SYSTEM_RENT_ADDRESS: PublicKey,
+    escrowAssociatedAddress: PublicKey,
+    recipientAssociatedAddress: PublicKey,
+    SPL_ASSOCIATED_TOKEN_ADDRESS: PublicKey,
+    feeAddress: PublicKey,
+    feeAssociatedAddress: PublicKey,
+    programId: PublicKey,
+    amount: number
+): Promise<TransactionInstruction> => {
+
+    const keys = [
+        { pubkey: senderAddress, isSigner: false, isWritable: true },
+        { pubkey: recipientAddress, isSigner: true, isWritable: true },
+        { pubkey: multisigVaultAddress, isSigner: false, isWritable: true },
+        { pubkey: vaultEscrowAddress, isSigner: false, isWritable: true },
+        { pubkey: txEscrowAddress, isSigner: false, isWritable: true },
+        { pubkey: withdrawEscrowAddress, isSigner: false, isWritable: true },
+        { pubkey: TOKEN_PROGRAM_ADDRESS, isSigner: false, isWritable: false },
+        { pubkey: tokenMintAddress, isSigner: false, isWritable: false },
+        { pubkey: SYSTEM_RENT_ADDRESS, isSigner: false, isWritable: false },
+        { pubkey: escrowAssociatedAddress, isSigner: false, isWritable: true },
+        { pubkey: recipientAssociatedAddress, isSigner: false, isWritable: true },
+        { pubkey: SPL_ASSOCIATED_TOKEN_ADDRESS, isSigner: false, isWritable: false },
+        { pubkey: SystemProgram.programId, isSigner: false, isWritable: false },
+        { pubkey: feeAddress, isSigner: false, isWritable: true },
+        { pubkey: feeAssociatedAddress, isSigner: false, isWritable: true }
+    ]
+
+    const ixData = {
+        instruction: INSTRUCTION.WITHDRAW_TOKEN_STREAM_MULTISIG,
+        amount: (amount * LAMPORTS_PER_SOL).toString()
+    }
+
+    return new TransactionInstruction({
+        keys,
+        programId,
+        data: Buffer.from(
+            serialize(SCHEMA.MultiSigTokenWithdrawSchema, new SCHEMA.MultiSigTokenWithdraw({...ixData}) )
+        )
+    })
+}
+
+export const createMultiSigTokenInitInstruction = async(
+    senderAddress: PublicKey,
+    recipientAddress: PublicKey,
+    escrowAddress: PublicKey,
+    vaultEscrowAddress: PublicKey,
+    TOKEN_PROGRAM_ADDRESS: PublicKey,
+    tokenMintAddress: PublicKey,
+    programId: PublicKey,
+    start_time: number,
+    end_time: number,
+    amount: number,
+    paused: number,
+    withdraw_limit: number
+): Promise<TransactionInstruction> => {
+
+    const keys = [
+        { pubkey: senderAddress, isSigner: true, isWritable: true },
+        { pubkey: recipientAddress, isSigner: false, isWritable: false },
+        { pubkey: escrowAddress, isSigner: true, isWritable: true },
+        { pubkey: vaultEscrowAddress, isSigner: false, isWritable: true },
+        { pubkey: TOKEN_PROGRAM_ADDRESS, isSigner: false, isWritable: false },
+        { pubkey: SystemProgram.programId, isSigner: false, isWritable: false },
+        { pubkey: tokenMintAddress, isSigner: false, isWritable: false }
+    ]
+
+    const signers = [
+        new SCHEMA.Signer({ address: senderAddress, counter: 0 })
+    ]
+
+    const ixData = {
+        instruction: INSTRUCTION.INIT_TOKEN_STREAM_MULTISIG,
+        start_time,
+        end_time,
+        paused,
+        withdraw_limit,
+        amount,
+        senderAddress,
+        recipientAddress,
+        token_mint: new PublicKey("J75jd3kjsABQSDrEdywcyhmbq8eHDowfW9xtEWsVALy9"),
+        signed_by: signers,
+        multisig_safe: new PublicKey("J75jd3kjsABQSDrEdywcyhmbq8eHDowfW9xtEWsVALy9")
+    }
+
+    return new TransactionInstruction({
+        keys,
+        programId,
+        data: Buffer.from(
+            serialize(SCHEMA.MultiSigTokenInitSchema, new SCHEMA.MultiSigTokenInit({...ixData}))
         )
     })
 }

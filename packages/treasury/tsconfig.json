@@ -1,25 +1,19 @@
 {
-    "compilerOptions": {
+  "compilerOptions": {
+      "module": "commonjs",
       "target": "es5",
-      "allowJs": true,
-      "declaration": true,
-      // "strict": true,
-      "outDir": "dist",
       "lib": ["es6", "dom", "dom.iterable", "esnext"],
-      "allowSyntheticDefaultImports": true,
-      "module": "CommonJS",
-      "moduleResolution": "node",    
+      "removeComments": true,
+      "preserveConstEnums": true,
       "sourceMap": false,
+      "allowJs": true,
+      "outDir": "dist/esm",
+      "moduleResolution": "Node",
+      "declaration": true,
+      "declarationDir": "dist/types",
+      "strict": false,
       "esModuleInterop": true,
-      "skipLibCheck": true,
-      "baseUrl": "src",
-      "forceConsistentCasingInFileNames": true,
-      "resolveJsonModule": true,
-      "noFallthroughCasesInSwitch": true,
-      "noImplicitReturns": true
-    },
-    "$schema": "https://json.schemastore.org/tsconfig",
-    "display": "Recommended",
-    "include": ["src"],
-    "exclude": ["node_modules"]
-  }
+  },
+  "include": ["src/**/*"],
+  "exclude": ["node_modules", "**/*.test.js"]
+}

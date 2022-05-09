@@ -1,8 +1,9 @@
-import { Commitment, Connection, ConnectionConfig, Keypair, PublicKey, Transaction } from "@solana/web3.js";
+import { TOKEN_PROGRAM_ID } from "@solana/spl-token";
+import { Commitment, Connection, ConnectionConfig, Keypair, PublicKey, Transaction, TransactionInstruction } from "@solana/web3.js";
 import { ZEBEC_PROGRAM_ID, RPC_ENDPOINTS, SAFE_STRING, WITHDRAW_SOL_STRING, WITHDRAW_MULTISIG_SOL_STRING, FEE_ADDRESS, WITHDRAW_MULTISIG_TOKEN_STRING, WITHDRAW_TOKEN_STRING, _TOKEN_PROGRAM_ID, SPL_ASSOCIATED_TOKEN_ACCOUNT_PROGRAM_ID, SYSTEM_RENT } from "./constants";
 import * as INSTRUCTIONS from './instructions';
 import { Signer, WhiteList } from "./schema";
-import { StreamTransactionResponse } from "./types";
+import { SignAndConfirm, StreamTransactionResponse } from "./types";
 
 class ZebecTreasury {
     protected _connection: Connection;
@@ -20,7 +21,7 @@ class ZebecTreasury {
         this._commitment = commitment as Commitment;
     }
 
-    protected async _signAndConfirm(tx: Transaction, commitment: Commitment | undefined = "confirmed"): Promise<any> {
+    protected async _signAndConfirm(tx: Transaction, commitment: Commitment | undefined = "confirmed"): Promise<SignAndConfirm> {
         const signed = await this.walletProvider.signTransaction(tx);
         const signature = await this._connection.sendRawTransaction(signed.serialize());
         await this._connection.confirmTransaction(signature, commitment);
@@ -72,8 +73,8 @@ export class NativeTreasury extends ZebecTreasury {
         const senderAddress = new PublicKey(sender);
 
         // find associated addresses (vault) - Prepare ix data - signers
-        const [zebecSafeAddress, _] = await this._findZebecSafeAccount(escrow.publicKey);
-        const [withdrawEscrowAddress, __] = await this._findWithdrawEscrowAccount(WITHDRAW_MULTISIG_SOL_STRING, zebecSafeAddress);
+        const [zebecSafeAddress,] = await this._findZebecSafeAccount(escrow.publicKey);
+        const [withdrawEscrowAddress,] = await this._findWithdrawEscrowAccount(WITHDRAW_MULTISIG_SOL_STRING, zebecSafeAddress);
 
         const signers = [];
         
@@ -136,9 +137,9 @@ export class NativeTreasury extends ZebecTreasury {
         const senderAddress = new PublicKey(sender);
         const escrowAddress = new PublicKey(multisig_escrow);
 
-        const [withdrawEscrowAddress, _] = await this._findWithdrawEscrowAccount(WITHDRAW_SOL_STRING, escrowAddress);
-        const [zebecSafeAddress, __] = await this._findZebecSafeAccount(escrowAddress);
-        const [zebecWalletAddress, ___] = await this._findZebecWalletAccount(senderAddress);
+        const [withdrawEscrowAddress,] = await this._findWithdrawEscrowAccount(WITHDRAW_SOL_STRING, escrowAddress);
+        const [zebecSafeAddress,] = await this._findZebecSafeAccount(escrowAddress);
+        const [zebecWalletAddress,] = await this._findZebecWalletAccount(senderAddress);
 
         const ix = await INSTRUCTIONS.createMultiSigDepositInstruction(
             senderAddress,
@@ -189,7 +190,7 @@ export class NativeTreasury extends ZebecTreasury {
         const txEscrowAddress = new PublicKey(tx_escrow);
         const zebecWalletEscrowAddress = new PublicKey(zebec_wallet_pda);
 
-        const [withdrawEscrowAddress, _] = await this._findWithdrawEscrowAccount(WITHDRAW_MULTISIG_SOL_STRING, zebecWalletAddress);
+        const [withdrawEscrowAddress,] = await this._findWithdrawEscrowAccount(WITHDRAW_MULTISIG_SOL_STRING, zebecWalletAddress);
         
         const ix = await INSTRUCTIONS.createMultiSigSignInstruction(
             senderAddress,
@@ -385,7 +386,7 @@ export class NativeTreasury extends ZebecTreasury {
         const zebecWalletEscrowAddress = new PublicKey(vault_escrow);
         const _FEE_ADDRESS = new PublicKey(FEE_ADDRESS)
 
-        const [withdrawEscrowAddress, _] = await this._findWithdrawEscrowAccount(WITHDRAW_MULTISIG_SOL_STRING, zebecSafeAddress);
+        const [withdrawEscrowAddress,] = await this._findWithdrawEscrowAccount(WITHDRAW_MULTISIG_SOL_STRING, zebecSafeAddress);
         
         const ix = await INSTRUCTIONS.createMultiSigCancelInstruction(
             senderAddress,
@@ -485,7 +486,7 @@ export class NativeTreasury extends ZebecTreasury {
         const zebecWalletEscrowAddress = new PublicKey(vault_escrow);
         const _FEE_ADDRESS = new PublicKey(FEE_ADDRESS);
 
-        const [withdrawEscrowAddress, _] = await this._findWithdrawEscrowAccount(WITHDRAW_MULTISIG_SOL_STRING, zebecSafeAddress);
+        const [withdrawEscrowAddress,] = await this._findWithdrawEscrowAccount(WITHDRAW_MULTISIG_SOL_STRING, zebecSafeAddress);
         
         const ix = await INSTRUCTIONS.createMultiSigWithdrawInstruction(
             senderAddress,
@@ -721,11 +722,11 @@ export class TokenTreasury extends ZebecTreasury {
         const SYSTEM_RENT_ADDRESS = new PublicKey(SYSTEM_RENT);
         const SPL_ASSOCIATED_TOKEN_ADDRESS = new PublicKey(SPL_ASSOCIATED_TOKEN_ACCOUNT_PROGRAM_ID);
 
-        const [withdrawEscrowAddress, _] = await this._findWithdrawEscrowAccount(WITHDRAW_TOKEN_STRING, senderAddress, tokenMintAddress);
-        const [senderAssociatedAddress, __] = await this._findAssociatedTokenAddress(senderAddress, tokenMintAddress);
-        const [zebecWalletAddress, ___] = await this._findZebecWalletAccount(senderAddress);
-        const [escrowAssociatedAddress, _____] = await this._findAssociatedTokenAddress(zebecSafeAddress, tokenMintAddress);
-        const [zebecWalletAssociatedAddress, ____] = await this._findAssociatedTokenAddress(zebecWalletAddress, tokenMintAddress)
+        const [withdrawEscrowAddress,] = await this._findWithdrawEscrowAccount(WITHDRAW_TOKEN_STRING, senderAddress, tokenMintAddress);
+        const [senderAssociatedAddress,] = await this._findAssociatedTokenAddress(senderAddress, tokenMintAddress);
+        const [zebecWalletAddress,] = await this._findZebecWalletAccount(senderAddress);
+        const [escrowAssociatedAddress,] = await this._findAssociatedTokenAddress(zebecSafeAddress, tokenMintAddress);
+        const [zebecWalletAssociatedAddress,] = await this._findAssociatedTokenAddress(zebecWalletAddress, tokenMintAddress)
 
         const ix = await INSTRUCTIONS.createMultiSigDepositTokenInstruction(
             senderAddress,
@@ -773,8 +774,8 @@ export class TokenTreasury extends ZebecTreasury {
             }
         }
     }
-    // sign stream
-    async sign(data: any): Promise<any> {
+
+    async sign(data: any): Promise<StreamTransactionResponse> {
         const { sender, zebec_safe, token_mint_address, tx_escrow, vault_escrow } = data;
         console.log("sign token stream tx data: ", data);
 
@@ -783,7 +784,7 @@ export class TokenTreasury extends ZebecTreasury {
         const txEscrowAddress = new PublicKey(tx_escrow);
         const zebecWalletEscrowAddress = new PublicKey(vault_escrow);
         const zebecSafeAddress = new PublicKey(zebec_safe);
-        const [withdrawEscrowAddress, _] = await this._findWithdrawEscrowAccount(WITHDRAW_MULTISIG_TOKEN_STRING, zebecSafeAddress, tokenMintAddress);
+        const [withdrawEscrowAddress,] = await this._findWithdrawEscrowAccount(WITHDRAW_MULTISIG_TOKEN_STRING, zebecSafeAddress, tokenMintAddress);
         
         const signer = new Signer({ address: senderAddress, counter: 0 });
 
@@ -824,13 +825,358 @@ export class TokenTreasury extends ZebecTreasury {
                 data: null
             }
         }
+    }
+
+    async reject(data: any): Promise<any> {
+        const {sender, tx_escrow, vault_escrow } = data;
+        console.log("data for reject tx sign: ", data);
+
+        const senderAddress = new PublicKey(sender);
+        const escrowAddress = new PublicKey(tx_escrow);
+        const vaultEscrowAddress = new PublicKey(vault_escrow);
+
+        const ix = await INSTRUCTIONS.createMultiSigTokenRejectInstruction(
+            senderAddress,
+            escrowAddress,
+            vaultEscrowAddress,
+            this._programId
+        )
+
+        const tx = new Transaction().add({...ix});
+
+        const recentHash = await this._connection.getRecentBlockhash();
+
+        try {
+            tx.recentBlockhash = recentHash.blockhash;
+            tx.feePayer = this.walletProvider.publicKey;
+
+            console.log("transaction ix after adding properties: ", tx);
+
+            const res = await this._signAndConfirm(tx);
+
+            console.log("response from sign and confirm: ", res);
+
+            return {
+                status: "success",
+                message: "sign rejected.",
+                data: {
+                    ...res
+                }
+            }
+        } catch(e) {
+            return {
+                status: "error",
+                message: e,
+                data: null
+            }
+        }
+    
+    }
+
+    async init(data: any): Promise<any> {
+        const { sender, receiver, vault_escrow, token_mint_address, start_time, end_time, amount } = data;
+        console.log("treasury start stream data: ", data);
+
+        const senderAddress = new PublicKey(sender);
+        const recipientAddress = new PublicKey(receiver);
+        const vaultEscrowAddress = new PublicKey(vault_escrow);
+        const TOKEN_PROGRAM_ADDRESS = new PublicKey(TOKEN_PROGRAM_ID);
+        const tokenMintAddress = new PublicKey(token_mint_address);
+
+        const escrow = new Keypair();
+
+        const paused = 0;
+        const withdraw_limit = 0
+
+        const ix = await INSTRUCTIONS.createMultiSigTokenInitInstruction(
+            senderAddress,
+            recipientAddress,
+            escrow.publicKey,
+            vaultEscrowAddress,
+            TOKEN_PROGRAM_ADDRESS,
+            tokenMintAddress,
+            this._programId,
+            start_time,
+            end_time,
+            amount,
+            paused,
+            withdraw_limit
+        )
+
+        const tx = new Transaction().add({...ix});
+
+        const recentHash = await this._connection.getRecentBlockhash();
+
+        try {
+            tx.recentBlockhash = recentHash.blockhash;
+            tx.feePayer = this.walletProvider.publicKey;
+            tx.partialSign(escrow);
+
+            console.log("transaction ix after adding properties: ", tx);
+
+            const res = await this._signAndConfirm(tx);
+
+            console.log("response from sign and confirm: ", res);
+
+            return {
+                status: "success",
+                message: "signed tx.",
+                data: {
+                    ...res,
+                    tx_escrow: escrow.publicKey.toString()
+                }
+            }
+        } catch(e) {
+            return {
+                status: "error",
+                message: e,
+                data: null
+            }
+        }
+
+        
+    }
+
+    async pause(data: any): Promise<any> {
+        const {sender, receiver, tx_escrow, vault_escrow } = data;
+        console.log("data for treasury stream pause: ", data);
+
+        const senderAddress = new PublicKey(sender);
+        const recipientAddress = new PublicKey(receiver);
+        const txEscrowAddress = new PublicKey(tx_escrow);
+        const vaultEscrowAddress = new PublicKey(vault_escrow);
+
+        const ix = await INSTRUCTIONS.createMultiSigTokenPauseInstruction(
+            senderAddress,
+            recipientAddress,
+            txEscrowAddress,
+            vaultEscrowAddress,
+            this._programId
+        )
+
+        const tx = new Transaction().add({...ix});
+
+        const recentHash = await this._connection.getRecentBlockhash();
+
+        try {
+            tx.recentBlockhash = recentHash.blockhash;
+            tx.feePayer = this.walletProvider.publicKey;
+
+            console.log("transaction ix after adding properties: ", tx);
+
+            const res = await this._signAndConfirm(tx);
+
+            console.log("response from sign and confirm: ", res);
+
+            return {
+                status: "success",
+                message: "paused token stream.",
+                data: {
+                    ...res
+                }
+            }
+        } catch(e) {
+            return {
+                status: "error",
+                message: e,
+                data: null
+            }
+        }
+
+        
 
     }
-    // reject stream
-    // init
-    // pause
-    // cancel
-    // resume
-    // withdraw
 
+    async cancel(data: any): Promise<StreamTransactionResponse> {
+        const { sender, receiver, token_mint_address, multisig_vault, tx_escrow, vault_escrow } = data;
+        console.log("data for treasury token stream: ", data);
+
+        const senderAddress = new PublicKey(sender);
+        const recipientAddress = new PublicKey(receiver);
+        const tokenMintAddress = new PublicKey(token_mint_address);
+        const multisigVaultAddress = new PublicKey(multisig_vault);
+        const txEscrowAddress = new PublicKey(tx_escrow);
+        const vaultEscrowAddress = new PublicKey(vault_escrow);
+        const feeAddress = new PublicKey(FEE_ADDRESS);
+        const TOKEN_PROGRAM_ADDRESS = new PublicKey(TOKEN_PROGRAM_ID);
+        const SYSTEM_RENT_ADDRESS = new PublicKey(SYSTEM_RENT);
+        const SPL_ASSOCIATED_TOKEN_ADDRESS = new PublicKey(SPL_ASSOCIATED_TOKEN_ACCOUNT_PROGRAM_ID)
+
+        const [recipientAssociatedAddress,] = await this._findAssociatedTokenAddress(recipientAddress, tokenMintAddress);
+        const [escrowAssociatedAddress,] = await this._findAssociatedTokenAddress(multisigVaultAddress, tokenMintAddress);
+        const [feeAssociatedAddress,] = await this._findAssociatedTokenAddress(feeAddress, tokenMintAddress);
+
+        const [withdrawEscrowAddress, ] = await this._findWithdrawEscrowAccount(
+            WITHDRAW_MULTISIG_SOL_STRING,
+            multisigVaultAddress,
+            tokenMintAddress
+        )
+
+        const ix = await INSTRUCTIONS.createMultiSigTokenCancelInstruction(
+            senderAddress,
+            recipientAddress,
+            multisigVaultAddress,
+            txEscrowAddress,
+            vaultEscrowAddress,
+            withdrawEscrowAddress,
+            TOKEN_PROGRAM_ADDRESS,
+            tokenMintAddress,
+            SYSTEM_RENT_ADDRESS,
+            recipientAssociatedAddress,
+            escrowAssociatedAddress,
+            SPL_ASSOCIATED_TOKEN_ADDRESS,
+            feeAddress,
+            feeAssociatedAddress,
+            this._programId
+        )
+
+        const tx = new Transaction().add({...ix});
+
+        const recentHash = await this._connection.getRecentBlockhash();
+
+        try {
+            tx.recentBlockhash = recentHash.blockhash;
+            tx.feePayer = this.walletProvider.publicKey;
+
+            console.log("transaction ix after adding properties: ", tx);
+
+            const res = await this._signAndConfirm(tx);
+
+            console.log("response from sign and confirm: ", res);
+
+            return {
+                status: "success",
+                message: "canceled stream",
+                data: {
+                    ...res
+                }
+            }
+        } catch(e) {
+            return {
+                status: "error",
+                message: e,
+                data: null
+            }
+        }
+
+
+    }
+
+    async resume(data: any): Promise<any> {
+        const {sender, receiver, tx_escrow, vault_escrow } = data;
+        console.log("data for treasury token stream resume: ", data);
+
+        const senderAddress = new PublicKey(sender);
+        const recipientAddress = new PublicKey(receiver);
+        const txEscrowAddress = new PublicKey(tx_escrow);
+        const vaultEscrowAddress = new PublicKey(vault_escrow);
+
+        const ix = await INSTRUCTIONS.createMultiSigTokenResumeInstruction(
+            senderAddress,
+            recipientAddress,
+            txEscrowAddress,
+            vaultEscrowAddress,
+            this._programId
+        )
+
+        const tx = new Transaction().add({...ix});
+
+        const recentHash = await this._connection.getRecentBlockhash();
+
+        try {
+            tx.recentBlockhash = recentHash.blockhash;
+            tx.feePayer = this.walletProvider.publicKey;
+
+            console.log("transaction ix after adding properties: ", tx);
+
+            const res = await this._signAndConfirm(tx);
+
+            console.log("response from sign and confirm: ", res);
+
+            return {
+                status: "success",
+                message: "tx resumed",
+                data: {
+                    ...res
+                }
+            }
+        } catch(e) {
+            return {
+                status: "error",
+                message: e,
+                data: null
+            }
+        }
+
+    }
+
+    async withdraw(data: any): Promise<any> {
+        const { sender, receiver, amount, multisig_vault, vault_escrow, tx_escrow, token_mint_address } = data;
+        console.log("data for withdraw stream token: ", data);
+
+        const senderAddress = new PublicKey(sender);
+        const recipientAddress = new PublicKey(receiver);
+        const multisigVaultAddress = new PublicKey(multisig_vault);
+        const txEscrowAddress = new PublicKey(tx_escrow);
+        const vaultEscrowAddress = new PublicKey(vault_escrow);
+        const tokenMintAddress = new PublicKey(token_mint_address);
+        const feeAddress = new PublicKey(FEE_ADDRESS);
+        const TOKEN_PROGRAM_ADDRESS = new PublicKey(TOKEN_PROGRAM_ID);
+        const SYSTEM_RENT_ADDRESS = new PublicKey(SYSTEM_RENT);
+        const SPL_ASSOCIATED_TOKEN_ADDRESS = new PublicKey(SPL_ASSOCIATED_TOKEN_ACCOUNT_PROGRAM_ID);
+
+        const [recipientAssociatedAddress,] = await this._findAssociatedTokenAddress(recipientAddress, tokenMintAddress);
+        const [escrowAssociatedAddress,] = await this._findAssociatedTokenAddress(multisigVaultAddress, tokenMintAddress);
+        const [feeAssociatedAddress,] = await this._findAssociatedTokenAddress(feeAddress, tokenMintAddress);
+        const [withdrawEscrowAddress,] = await this._findWithdrawEscrowAccount(WITHDRAW_MULTISIG_SOL_STRING, multisigVaultAddress, tokenMintAddress);
+
+        const ix = await INSTRUCTIONS.createMultiSigTokenWithdrawInstruction(
+            senderAddress,
+            recipientAddress,
+            multisigVaultAddress,
+            vaultEscrowAddress,
+            txEscrowAddress,
+            withdrawEscrowAddress,
+            TOKEN_PROGRAM_ADDRESS,
+            tokenMintAddress,
+            SYSTEM_RENT_ADDRESS,
+            escrowAssociatedAddress,
+            recipientAssociatedAddress,
+            SPL_ASSOCIATED_TOKEN_ADDRESS,
+            feeAddress,
+            feeAssociatedAddress,
+            this._programId,
+            amount
+        );
+
+        const tx = new Transaction().add({...ix});
+
+        const recentHash = await this._connection.getRecentBlockhash();
+
+        try {
+            tx.recentBlockhash = recentHash.blockhash;
+            tx.feePayer = this.walletProvider.publicKey;
+
+            console.log("transaction ix after adding properties: ", tx);
+
+            const res = await this._signAndConfirm(tx);
+
+            console.log("response from sign and confirm: ", res);
+
+            return {
+                status: "success",
+                message: "withdraw successful",
+                data: {
+                    ...res
+                }
+            }
+        } catch(e) {
+            return {
+                status: "error",
+                message: e,
+                data: null
+            }
+        }
+
+    }
 }
