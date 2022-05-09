@@ -419,7 +419,7 @@ export class TokenStream extends ZebecStream {
         ))[0];
     }
 
-    async init(data: any): Promise<any> {
+    public async init(data: any): Promise<any> {
         const { sender, receiver, token, start_time, end_time, amount } = data;
         // console.log("sender token stream data: ", data);
 
@@ -474,7 +474,7 @@ export class TokenStream extends ZebecStream {
         }
     }
 
-    async pause(data: any): Promise<any> {
+    public async pause(data: any): Promise<any> {
         const { sender, receiver, pda } = data;
 
         // console.log("pause token stream data: ", data);
@@ -521,7 +521,7 @@ export class TokenStream extends ZebecStream {
 
     }
 
-    async resume(data: any): Promise<any> {
+    public async resume(data: any): Promise<any> {
         const { sender, receiver, pda } = data;
 
         // console.log("resume token stream data: ", data);
@@ -566,7 +566,7 @@ export class TokenStream extends ZebecStream {
         }
     }
 
-    async cancel(data: any): Promise<any> {
+    public async cancel(data: any): Promise<any> {
         const { sender, receiver, token, pda} = data;
 
         // console.log("cancel token stream data: ", data);
@@ -627,7 +627,7 @@ export class TokenStream extends ZebecStream {
 
     }
 
-    async withdraw(data: any): Promise<any> {
+    public async withdraw(data: any): Promise<any> {
         const { sender, receiver, token, pda, amount } = data;
         // console.log("withdraw token stream data: ", data);
 
@@ -694,7 +694,7 @@ export class TokenStream extends ZebecStream {
 
     }
 
-    async deposit(data: any): Promise<any> {
+    public async deposit(data: any): Promise<any> {
         const { sender, token, amount } = data;
 
         // console.log("deposit token stream data: ", data);
@@ -754,7 +754,7 @@ export class TokenStream extends ZebecStream {
         }
     }
 
-    async withdrawDepositedToken(data: any): Promise<any> {
+    public async withdrawDepositedToken(data: any): Promise<any> {
         const { sender, token, amount } = data;
 
         // console.log("withdraw deposited token data: ", data);

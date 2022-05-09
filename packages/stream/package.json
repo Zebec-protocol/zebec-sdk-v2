@@ -1,6 +1,6 @@
 {
   "name": "@zebec-protocol/stream",
-  "version": "1.1.1",
+  "version": "1.1.2",
   "description": "Zebec Protocol SDK V2 - Treasury Management",
   "types": "./dist/types/index.d.ts",
   "keywords": [
