@@ -33,7 +33,7 @@ export class MultiSigTokenInit extends Base {}
 
 export const MultiSigSafeSchema =  new Map([
     [
-        WhiteList,
+        MultiSigSafe,
         {
             kind: "struct",
             fields: [
