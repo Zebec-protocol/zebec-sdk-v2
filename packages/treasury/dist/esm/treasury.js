@@ -177,12 +177,14 @@ var NativeTreasury = (function (_super) {
                         return [4, this._findWithdrawEscrowAccount(constants_1.WITHDRAW_MULTISIG_SOL_STRING, zebecSafeAddress)];
                     case 2:
                         withdrawEscrowAddress = (_a.sent())[0];
+                        console.log("now creating signers array");
                         signers = [];
                         owners.map(function (owner) {
                             var ownerAddress = new web3_js_1.PublicKey(owner.wallet_address);
                             signers.push(new schema_1.Signer({ address: ownerAddress, counter: 0 }));
                         });
-                        whiteList = new schema_1.WhiteList({ signers: signers, m: min_confirmation_required });
+                        console.log(signers, "SINGERS");
+                        whiteList = new schema_1.MultiSigSafe({ signers: signers, m: min_confirmation_required });
                         return [4, INSTRUCTIONS.createMultiSigSafeInstruction(senderAddress, escrow.publicKey, withdrawEscrowAddress, this._programId, whiteList)];
                     case 3:
                         ix = _a.sent();
