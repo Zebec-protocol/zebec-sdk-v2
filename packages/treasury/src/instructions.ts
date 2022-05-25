@@ -8,10 +8,11 @@ export const createMultiSigSafeInstruction = async (
     escrowAddress: PublicKey,
     withdrawEscrowAddress: PublicKey,
     programId: PublicKey,
-    whiteList: any,
+    signers: any,
+    m: number
 ): Promise<TransactionInstruction> => {
     
-    const { signers, m } = whiteList;
+    // const { signers, m } = whiteList;
 
     const SYSTEM_PROGRAM = new PublicKey("11111111111111111111111111111111");
 
@@ -24,10 +25,12 @@ export const createMultiSigSafeInstruction = async (
 
     const ixData = {
         instruction: INSTRUCTION.CREATE_WHITELIST,
-        signers,
-        m,
+        signers: signers,
+        m: m,
         multisig_safe: new PublicKey("J75jd3kjsABQSDrEdywcyhmbq8eHDowfW9xtEWsVALy9")
     };
+
+    console.log("ix Data", ixData);
 
     return new TransactionInstruction({
         keys,

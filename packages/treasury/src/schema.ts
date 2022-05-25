@@ -7,7 +7,6 @@ class Base {
 }
 
 export class Signer extends Base {}
-export class WhiteList extends Base {}
 export class MultiSigSafe extends Base {}
 export class MultiSigDeposit extends Base {}
 export class MultiSigSign extends Base {}

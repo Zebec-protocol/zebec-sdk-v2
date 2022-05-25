@@ -1,5 +1,5 @@
 import { PublicKey, TransactionInstruction } from "@solana/web3.js";
-export declare const createMultiSigSafeInstruction: (senderAddress: PublicKey, escrowAddress: PublicKey, withdrawEscrowAddress: PublicKey, programId: PublicKey, whiteList: any) => Promise<TransactionInstruction>;
+export declare const createMultiSigSafeInstruction: (senderAddress: PublicKey, escrowAddress: PublicKey, withdrawEscrowAddress: PublicKey, programId: PublicKey, signers: any, m: number) => Promise<TransactionInstruction>;
 export declare const createMultiSigDepositInstruction: (senderAddress: PublicKey, zebecWalletAddress: PublicKey, zebecSafeAddress: PublicKey, escrowAddress: PublicKey, withdrawEscrowAddress: PublicKey, programId: PublicKey, amount: number) => Promise<TransactionInstruction>;
 export declare const createMultiSigSignInstruction: (senderAddress: PublicKey, txEscrowAddress: PublicKey, zebecWalletEscrowAddress: PublicKey, withdrawEscrowAddress: PublicKey, programId: PublicKey, signer: any) => Promise<TransactionInstruction>;
 export declare const createMultiSigRejectSignInstruction: (senderAddress: PublicKey, txEscrowAddress: PublicKey, zebecWalletEscrowAddress: PublicKey, programId: PublicKey) => Promise<TransactionInstruction>;

@@ -2,7 +2,7 @@ import { TOKEN_PROGRAM_ID } from "@solana/spl-token";
 import { Commitment, Connection, ConnectionConfig, Keypair, PublicKey, Transaction, TransactionInstruction } from "@solana/web3.js";
 import { ZEBEC_PROGRAM_ID, RPC_ENDPOINTS, SAFE_STRING, WITHDRAW_SOL_STRING, WITHDRAW_MULTISIG_SOL_STRING, FEE_ADDRESS, WITHDRAW_MULTISIG_TOKEN_STRING, WITHDRAW_TOKEN_STRING, _TOKEN_PROGRAM_ID, SPL_ASSOCIATED_TOKEN_ACCOUNT_PROGRAM_ID, SYSTEM_RENT } from "./constants";
 import * as INSTRUCTIONS from './instructions';
-import { Signer, MultiSigSafe } from "./schema";
+import { Signer } from "./schema";
 import { SignAndConfirm, StreamTransactionResponse } from "./types";
 
 class ZebecTreasury {
@@ -72,11 +72,9 @@ export class NativeTreasury extends ZebecTreasury {
         
         const senderAddress = new PublicKey(sender);
 
-        // find associated addresses (vault) - Prepare ix data - signers
         const [zebecSafeAddress,] = await this._findZebecSafeAccount(escrow.publicKey);
         const [withdrawEscrowAddress,] = await this._findWithdrawEscrowAccount(WITHDRAW_MULTISIG_SOL_STRING, zebecSafeAddress);
 
-        console.log("now creating signers array")
         const signers = [];
         
         owners.map((owner: any) => {
@@ -88,16 +86,13 @@ export class NativeTreasury extends ZebecTreasury {
             )
         })
 
-        console.log(signers, "SINGERS")
-
-        const whiteList = new MultiSigSafe({ signers, m: min_confirmation_required });
-
         const ix = await INSTRUCTIONS.createMultiSigSafeInstruction(
             senderAddress,
             escrow.publicKey,
             withdrawEscrowAddress,
             this._programId,
-            whiteList
+            signers,
+            min_confirmation_required
         )
 
         const tx = new Transaction().add({...ix});

@@ -75,10 +75,9 @@ var web3_js_1 = require("@solana/web3.js");
 var borsh_1 = require("borsh");
 var constants_1 = require("./constants");
 var SCHEMA = __importStar(require("./schema"));
-var createMultiSigSafeInstruction = function (senderAddress, escrowAddress, withdrawEscrowAddress, programId, whiteList) { return __awaiter(void 0, void 0, void 0, function () {
-    var signers, m, SYSTEM_PROGRAM, keys, ixData;
+var createMultiSigSafeInstruction = function (senderAddress, escrowAddress, withdrawEscrowAddress, programId, signers, m) { return __awaiter(void 0, void 0, void 0, function () {
+    var SYSTEM_PROGRAM, keys, ixData;
     return __generator(this, function (_a) {
-        signers = whiteList.signers, m = whiteList.m;
         SYSTEM_PROGRAM = new web3_js_1.PublicKey("11111111111111111111111111111111");
         keys = [
             { pubkey: senderAddress, isSigner: true, isWritable: true },

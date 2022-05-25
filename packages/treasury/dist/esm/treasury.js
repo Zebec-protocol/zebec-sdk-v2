@@ -91,6 +91,8 @@ var web3_js_1 = require("@solana/web3.js");
 var constants_1 = require("./constants");
 var INSTRUCTIONS = __importStar(require("./instructions"));
 var schema_1 = require("./schema");
+var utils_1 = require("./utils");
+(0, utils_1.extendBorsh)();
 var ZebecTreasury = (function () {
     function ZebecTreasury(walletProvider, rpcUrl, commitment) {
         this._programId = new web3_js_1.PublicKey(constants_1.ZEBEC_PROGRAM_ID);
@@ -163,7 +165,7 @@ var NativeTreasury = (function (_super) {
     };
     NativeTreasury.prototype.createSafe = function (data) {
         return __awaiter(this, void 0, void 0, function () {
-            var sender, owners, min_confirmation_required, escrow, senderAddress, zebecSafeAddress, withdrawEscrowAddress, signers, whiteList, ix, tx, recentHash, res, e_1;
+            var sender, owners, min_confirmation_required, escrow, senderAddress, zebecSafeAddress, withdrawEscrowAddress, signers, ix, tx, recentHash, res, e_1;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
@@ -177,15 +179,12 @@ var NativeTreasury = (function (_super) {
                         return [4, this._findWithdrawEscrowAccount(constants_1.WITHDRAW_MULTISIG_SOL_STRING, zebecSafeAddress)];
                     case 2:
                         withdrawEscrowAddress = (_a.sent())[0];
-                        console.log("now creating signers array");
                         signers = [];
                         owners.map(function (owner) {
                             var ownerAddress = new web3_js_1.PublicKey(owner.wallet_address);
                             signers.push(new schema_1.Signer({ address: ownerAddress, counter: 0 }));
                         });
-                        console.log(signers, "SINGERS");
-                        whiteList = new schema_1.MultiSigSafe({ signers: signers, m: min_confirmation_required });
-                        return [4, INSTRUCTIONS.createMultiSigSafeInstruction(senderAddress, escrow.publicKey, withdrawEscrowAddress, this._programId, whiteList)];
+                        return [4, INSTRUCTIONS.createMultiSigSafeInstruction(senderAddress, escrow.publicKey, withdrawEscrowAddress, this._programId, signers, min_confirmation_required)];
                     case 3:
                         ix = _a.sent();
                         tx = new web3_js_1.Transaction().add(__assign({}, ix));
