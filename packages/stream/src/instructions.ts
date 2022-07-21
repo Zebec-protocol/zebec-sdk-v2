@@ -176,7 +176,7 @@ export const createWithdrawMultiTokenStreamInstruction = async(
 
     const ixData = {
         instruction: INSTRUCTION.WITHDRAW_TOKEN_STREAM,
-        amount: (amount * LAMPORTS_PER_SOL).toString()
+        amount
     }
 
     return new TransactionInstruction({
@@ -214,7 +214,7 @@ export const createDepositMultiTokenInstruction = async(
     ]
     const ixData = {
         instruction: INSTRUCTION.DEPOSIT_TOKEN,
-        amount: (amount * LAMPORTS_PER_SOL).toString()
+        amount
     }
 
     return new TransactionInstruction({
@@ -250,7 +250,7 @@ export const createWithdrawDepositedTokenInstruction = async(
 
     const ixData = {
         instruction: INSTRUCTION.WITHDRAW_TOKEN,
-        amount: (amount * LAMPORTS_PER_SOL).toString()
+        amount
     }
 
     return new TransactionInstruction({

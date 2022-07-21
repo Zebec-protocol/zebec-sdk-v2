@@ -420,7 +420,7 @@ export class TokenStream extends ZebecStream {
     }
 
     public async init(data: any): Promise<any> {
-        const { sender, receiver, token, start_time, end_time, amount } = data;
+        let { sender, receiver, token, start_time, end_time, amount } = data;
         // console.log("sender token stream data: ", data);
 
         const senderAddress = new PublicKey(sender);
@@ -430,6 +430,10 @@ export class TokenStream extends ZebecStream {
         const [withdrawEscrowAddress, _] = await this._findWithDrawEscrowAccount(senderAddress, tokenMintAddress);
 
         const escrowAddress = new Keypair();
+        
+        //get token decimals
+        let tokenInfo = await this._connection.getTokenSupply(tokenMintAddress);
+        amount = amount * Math.pow(10, tokenInfo.value.decimals);
 
         const ix = await INSTRUCTIONS.createInitMultiTokenStreamInstruction(
             senderAddress,
@@ -628,7 +632,7 @@ export class TokenStream extends ZebecStream {
     }
 
     public async withdraw(data: any): Promise<any> {
-        const { sender, receiver, token, pda, amount } = data;
+        let { sender, receiver, token, pda, amount } = data;
         // console.log("withdraw token stream data: ", data);
 
         const senderAddress = new PublicKey(sender);
@@ -645,6 +649,10 @@ export class TokenStream extends ZebecStream {
         const zebecWalletAssociatedTokenAddress = await this._findAssociatedTokenAddress(zebecWalletAddress, tokenMintAddress);
         const feeAssociatedTokenAddress = await this._findAssociatedTokenAddress(_FEE_ADDRESS, tokenMintAddress);
         const [withdrawEscrowAddress, __] = await this._findWithDrawEscrowAccount(senderAddress, tokenMintAddress);
+        
+        //get token decimals
+        let tokenInfo = await this._connection.getTokenSupply(tokenMintAddress);
+        amount = amount * Math.pow(10, tokenInfo.value.decimals);
 
         const ix = await INSTRUCTIONS.createWithdrawMultiTokenStreamInstruction(
             senderAddress,
@@ -695,7 +703,7 @@ export class TokenStream extends ZebecStream {
     }
 
     public async deposit(data: any): Promise<any> {
-        const { sender, token, amount } = data;
+        let { sender, token, amount } = data;
 
         // console.log("deposit token stream data: ", data);
 
@@ -711,6 +719,10 @@ export class TokenStream extends ZebecStream {
 
         // console.log("Sender Associated Token Address", senderAssociatedTokenAddress);
         // console.log("Zebec Wallet Associated Token Address", zebecWalletAssociatedTokenAddress);
+        
+        //get token decimals
+        let tokenInfo = await this._connection.getTokenSupply(tokenMintAddress);
+        amount = amount * Math.pow(10, tokenInfo.value.decimals);
 
         const ix = await INSTRUCTIONS.createDepositMultiTokenInstruction(
             senderAddress,
@@ -755,7 +767,7 @@ export class TokenStream extends ZebecStream {
     }
 
     public async withdrawDepositedToken(data: any): Promise<any> {
-        const { sender, token, amount } = data;
+        let { sender, token, amount } = data;
 
         // console.log("withdraw deposited token data: ", data);
 
@@ -766,6 +778,10 @@ export class TokenStream extends ZebecStream {
         const senderAssociatedTokenAddress = await this._findAssociatedTokenAddress(senderAddress, tokenMintAddress);
         const zebecWalletAssociatedTokenAddress = await this._findAssociatedTokenAddress(zebecWalletAddress, tokenMintAddress);
         const _TOKEN_PROGRAM_ID_ = new PublicKey(_TOKEN_PROGRAM_ID);
+
+        //get token decimals
+        let tokenInfo = await this._connection.getTokenSupply(tokenMintAddress);
+        amount = amount * Math.pow(10, tokenInfo.value.decimals);
 
         const ix = await INSTRUCTIONS.createWithdrawDepositedTokenInstruction(
             senderAddress,
