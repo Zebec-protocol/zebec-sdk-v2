@@ -1,38 +1,36 @@
-import { Keypair } from "@solana/web3.js";
-
 export type SignAndConfirm = {
-  transactionHash: string;
-  pda?: string;
-};
+    transactionHash: string;
+    pda?: string;
+}
 
 export type StreamTransactionResponse = {
-  status: string;
-  message: string | Error;
-  data: SignAndConfirm;
-};
+    status: string;
+    message: string | Error;
+    data: SignAndConfirm
+}
 
 export type InitNativeStream = {
-  sender: string;
-  receiver: string;
-  start_time: number;
-  end_time: number;
-  amount: number;
-};
+    sender: string;
+    receiver: string;
+    start_time: number;
+    end_time: number;
+    amount: number;
+}
 
 export type PauseResumeCancelNativeStream = {
-  sender: string;
-  receiver: string;
-  pda: string;
-};
+    sender: string;
+    receiver: string;
+    pda: string;
+}
 
 export type WithdrawNativeStream = {
-  sender: string;
-  receiver: string | Keypair;
-  pda: string;
-  amount: number;
-};
+    sender: string;
+    receiver: string;
+    pda: string;
+    amount: number;
+}
 
 export type DepositWithdrawSol = {
-  sender: string;
-  amount: number;
-};
+    sender: string;
+    amount: number;
+}
